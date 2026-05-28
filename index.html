@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoloSortie</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400&family=Quicksand:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #1a1c1e;       /* Deep, soft charcoal */
+            --text-main: #e2e8f0;      /* Soft off-white */
+            --text-muted: #718096;     /* Slate grey */
+            --accent: #a78bfa;         /* Gentle lavender */
+            --font-ui: 'Quicksand', sans-serif;
+            --font-ink: 'Kalam', cursive;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-ui);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- Lock Screen --- */
+        #lock-screen {
+            text-align: center;
+            transition: opacity 0.5s ease;
+        }
+
+        #lock-screen h1 {
+            font-size: 1.5rem;
+            font-weight: 300;
+            letter-spacing: 6px;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        #password-input {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--text-muted);
+            color: var(--text-main);
+            font-family: var(--font-ui);
+            font-size: 1.2rem;
+            padding: 0.5rem;
+            text-align: center;
+            outline: none;
+            letter-spacing: 3px;
+            width: 220px;
+            transition: border-color 0.4s;
+        }
+
+        #password-input:focus { border-color: var(--accent); }
+
+        /* --- Main App Container --- */
+        #journal-container {
+            display: none;
+            width: 100%;
+            max-width: 700px;
+            padding: 4rem 2rem;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        /* --- Header & Controls --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 3rem;
+            border-bottom: 1px solid rgba(113, 128, 150, 0.2);
+            padding-bottom: 1rem;
+        }
+
+        header h2 {
+            font-size: 1.2rem;
+            font-weight: 400;
+            letter-spacing: 4px;
+            color: var(--text-muted);
+        }
+
+        .add-btn {
+            background: transparent;
+            border: 1px solid var(--text-muted);
+            color: var(--text-muted);
+            font-family: var(--font-ui);
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            padding: 0.4rem 1.2rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* --- Expandable Composer --- */
+        .composer-wrapper {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 0;
+        }
+
+        .composer-wrapper.open {
+            max-height: 600px; /* Expands to fit content */
+            margin-bottom: 3rem;
+        }
+
+        .composer {
+            background: #202327;
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid rgba(113, 128, 150, 0.1);
+        }
+
+        .composer input, .composer textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            outline: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .composer input {
+            font-family: var(--font-ui);
+            font-size: 1.4rem;
+            font-weight: 500;
+            border-bottom: 1px solid rgba(113, 128, 150, 0.2);
+            padding-bottom: 0.5rem;
+        }
+
+        .composer textarea {
+            font-family: var(--font-ink);
+            font-size: 1.3rem;
+            resize: vertical;
+            min-height: 120px;
+            line-height: 1.7;
+        }
+
+        .composer-actions {
+            text-align: right;
+        }
+
+        .submit-btn {
+            background: var(--accent);
+            color: var(--bg-color);
+            border: none;
+            font-family: var(--font-ui);
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .submit-btn:hover { opacity: 0.8; }
+
+        /* --- Timeline Structure --- */
+        .timeline {
+            position: relative;
+            padding-left: 2.5rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 10px;
+            bottom: 0;
+            width: 1px;
+            background: linear-gradient(to bottom, var(--text-muted) 85%, transparent);
+            opacity: 0.3;
+        }
+
+        .journal-entry {
+            position: relative;
+            margin-bottom: 4rem;
+            cursor: pointer;
+        }
+
+        .journal-entry::before {
+            content: '';
+            position: absolute;
+            left: -37px;
+            top: 8px;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background-color: var(--text-muted);
+            transition: all 0.4s ease;
+        }
+
+        .journal-entry:hover::before, .journal-entry.active::before {
+            background-color: var(--accent);
+            box-shadow: 0 0 10px var(--accent);
+            transform: scale(1.4);
+        }
+
+        .entry-date {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            margin-bottom: 0.3rem;
+        }
+
+        .entry-title {
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: var(--text-main);
+            transition: color 0.3s;
+        }
+
+        .journal-entry:hover .entry-title, .journal-entry.active .entry-title {
+            color: var(--accent);
+        }
+
+        .entry-content-wrapper {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+        }
+
+        .entry-content {
+            font-family: var(--font-ink);
+            font-size: 1.3rem; /* Kalam needs to be slightly larger to read easily */
+            color: #b0b9c1;
+            padding-top: 1.5rem;
+            white-space: pre-line;
+            line-height: 1.8;
+        }
+
+        .journal-entry.active .entry-content-wrapper {
+            max-height: 2500px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="lock-screen">
+        <h1>SOLOSORTIE</h1>
+        <input type="password" id="password-input" placeholder="password" autofocus>
+    </div>
+
+    <div id="journal-container">
+        
+        <header>
+            <h2>THE LEDGER</h2>
+            <button class="add-btn" onclick="toggleComposer()">+ Add Entry</button>
+        </header>
+
+        <div class="composer-wrapper" id="composer-panel">
+            <div class="composer">
+                <input type="text" id="new-title" placeholder="A quiet thought..." autocomplete="off">
+                <textarea id="new-content" placeholder="Write here in ink..."></textarea>
+                <div class="composer-actions">
+                    <button class="submit-btn" onclick="addEntry()">Record</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline" id="timeline-target">
+            </div>
+
+    </div>
+
+    <script>
+        // ==========================================
+        // MASTER CONFIGURATION
+        // ==========================================
+        const PASSWORD_ENABLED = true; 
+        const JOURNAL_PASSWORD = "123";
+
+        const lockScreen = document.getElementById('lock-screen');
+        const passwordInput = document.getElementById('password-input');
+        const journalContainer = document.getElementById('journal-container');
+        const timelineTarget = document.getElementById('timeline-target');
+        const composerPanel = document.getElementById('composer-panel');
+
+        // ==========================================
+        // DATABASE LOGIC (CLOUDFLARE API)
+        // ==========================================
+        
+        async function loadTimeline() {
+            try {
+                const response = await fetch('/api/entries');
+                const journalEntries = await response.json();
+                
+                if (journalEntries.length === 0) {
+                    timelineTarget.innerHTML = `<div style="color:var(--text-muted); font-family:var(--font-ui);">No entries exist yet. The page is blank.</div>`;
+                    return;
+                }
+
+                timelineTarget.innerHTML = journalEntries.map(entry => `
+                    <div class="journal-entry" onclick="toggleEntry(this)">
+                        <div class="entry-date">${entry.date}</div>
+                        <div class="entry-title">${entry.title}</div>
+                        <div class="entry-content-wrapper">
+                            <div class="entry-content">${entry.content}</div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                timelineTarget.innerHTML = `<div style="color:#ef4444; font-family:var(--font-ui);">Could not connect to D1 Database.</div>`;
+            }
+        }
+
+        function getFormattedDate() {
+            const options = { year: 'numeric', month: 'LONG', day: 'numeric' };
+            return new Date().toLocaleDateString('en-US', options).toUpperCase();
+        }
+
+        async function addEntry() {
+            const titleInput = document.getElementById('new-title');
+            const contentInput = document.getElementById('new-content');
+
+            if (!titleInput.value.trim() || !contentInput.value.trim()) return;
+
+            const payload = {
+                date: getFormattedDate(),
+                title: titleInput.value.trim(),
+                content: contentInput.value.trim()
+            };
+
+            // Lock inputs while saving
+            titleInput.disabled = true;
+            contentInput.disabled = true;
+
+            try {
+                const response = await fetch('/api/entries', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    titleInput.value = '';
+                    contentInput.value = '';
+                    toggleComposer(); // Close panel automatically
+                    await loadTimeline(); // Refresh list from DB
+                } else {
+                    alert("Failed to write to database.");
+                }
+            } catch (e) {
+                alert("Network error.");
+            }
+
+            titleInput.disabled = false;
+            contentInput.disabled = false;
+        }
+
+        // ==========================================
+        // UI INTERACTIONS
+        // ==========================================
+
+        function toggleComposer() {
+            composerPanel.classList.toggle('open');
+        }
+
+        function toggleEntry(element) {
+            // Prevent toggling if user is highlighting text
+            const selection = window.getSelection().toString();
+            if(selection.length > 0) return;
+            element.classList.toggle('active');
+        }
+
+        function revealJournal() {
+            lockScreen.style.opacity = '0';
+            setTimeout(() => {
+                lockScreen.style.display = 'none';
+                document.body.style.alignItems = 'flex-start';
+                journalContainer.style.display = 'block';
+                setTimeout(() => {
+                    journalContainer.style.opacity = '1';
+                    journalContainer.style.transform = 'translateY(0)';
+                }, 50);
+            }, 600);
+        }
+
+        // Boot Sequence
+        (function init() {
+            loadTimeline(); 
+            
+            if (!PASSWORD_ENABLED) {
+                lockScreen.style.display = 'none';
+                document.body.style.alignItems = 'flex-start';
+                journalContainer.style.display = 'block';
+                journalContainer.style.opacity = '1';
+                journalContainer.style.transform = 'translateY(0)';
+            } else {
+                passwordInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        if (passwordInput.value === JOURNAL_PASSWORD) revealJournal();
+                        else {
+                            passwordInput.value = '';
+                            passwordInput.style.borderColor = '#ef4444';
+                            setTimeout(() => passwordInput.style.borderColor = 'var(--text-muted)', 500);
+                        }
+                    }
+                });
+            }
+        })();
+    </script>
+</body>
+</html>
