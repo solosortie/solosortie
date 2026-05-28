@@ -119,7 +119,7 @@
         }
 
         .composer-wrapper.open {
-            max-height: 600px; /* Expands to fit content */
+            max-height: 1200px; /* Large enough to never clip */
             margin-bottom: 3rem;
         }
 
@@ -325,7 +325,7 @@
         }
 
         function getFormattedDate() {
-            const options = { year: 'numeric', month: 'LONG', day: 'numeric' };
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
             return new Date().toLocaleDateString('en-US', options).toUpperCase();
         }
 
