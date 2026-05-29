@@ -1,424 +1,851 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SoloSortie</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400&family=Quicksand:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SoloSortie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Kalam:wght@300;400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    <style>
-        :root {
-            --bg-color: #1a1c1e;       /* Deep, soft charcoal */
-            --text-main: #e2e8f0;      /* Soft off-white */
-            --text-muted: #718096;     /* Slate grey */
-            --accent: #a78bfa;         /* Gentle lavender */
-            --font-ui: 'Quicksand', sans-serif;
-            --font-ink: 'Kalam', cursive;
-        }
+    :root {
+      --bg: #1a1c1e;
+      --surface: #22252a;
+      --surface2: #2a2e35;
+      --text: #e2e8f0;
+      --muted: #718096;
+      --accent: #a78bfa;
+      --accent-dim: rgba(167, 139, 250, 0.15);
+      --accent-glow: rgba(167, 139, 250, 0.35);
+      --danger: #f87171;
+      --border: rgba(255,255,255,0.07);
+      --radius: 12px;
+    }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Quicksand', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: var(--font-ui);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
+    /* ─── LOCK SCREEN ─────────────────────────────── */
+    #lock-screen {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      background: var(--bg);
+      z-index: 100;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
 
-        /* --- Lock Screen --- */
-        #lock-screen {
-            text-align: center;
-            transition: opacity 0.5s ease;
-        }
+    #lock-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
 
-        #lock-screen h1 {
-            font-size: 1.5rem;
-            font-weight: 300;
-            letter-spacing: 6px;
-            color: var(--text-muted);
-            margin-bottom: 2rem;
-        }
+    .lock-title {
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 300;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--text);
+      text-indent: 0.4em;
+    }
 
-        #password-input {
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid var(--text-muted);
-            color: var(--text-main);
-            font-family: var(--font-ui);
-            font-size: 1.2rem;
-            padding: 0.5rem;
-            text-align: center;
-            outline: none;
-            letter-spacing: 3px;
-            width: 220px;
-            transition: border-color 0.4s;
-        }
+    .lock-title span {
+      color: var(--accent);
+    }
 
-        #password-input:focus { border-color: var(--accent); }
+    .lock-subtitle {
+      font-size: 0.75rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 400;
+    }
 
-        /* --- Main App Container --- */
-        #journal-container {
-            display: none;
-            width: 100%;
-            max-width: 700px;
-            padding: 4rem 2rem;
-            opacity: 0;
-            transform: translateY(15px);
-            transition: opacity 0.7s ease, transform 0.7s ease;
-        }
+    #lock-input {
+      background: transparent;
+      border: none;
+      border-bottom: 1.5px solid var(--border);
+      color: var(--text);
+      font-family: 'Quicksand', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 0.3em;
+      padding: 0.5rem 0;
+      text-align: center;
+      width: 200px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
 
-        /* --- Header & Controls --- */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-bottom: 3rem;
-            border-bottom: 1px solid rgba(113, 128, 150, 0.2);
-            padding-bottom: 1rem;
-        }
+    #lock-input:focus {
+      border-bottom-color: var(--accent);
+    }
 
-        header h2 {
-            font-size: 1.2rem;
-            font-weight: 400;
-            letter-spacing: 4px;
-            color: var(--text-muted);
-        }
+    #lock-input.error {
+      border-bottom-color: var(--danger);
+      animation: shake 0.35s ease;
+    }
 
-        .add-btn {
-            background: transparent;
-            border: 1px solid var(--text-muted);
-            color: var(--text-muted);
-            font-family: var(--font-ui);
-            font-size: 0.85rem;
-            font-weight: 500;
-            letter-spacing: 1px;
-            padding: 0.4rem 1.2rem;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+    }
 
-        .add-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
+    /* ─── JOURNAL VIEW ────────────────────────────── */
+    #journal {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 6rem;
+      opacity: 0;
+      transition: opacity 0.7s ease;
+    }
 
-        /* --- Expandable Composer --- */
-        .composer-wrapper {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            margin-bottom: 0;
-        }
+    #journal.visible {
+      opacity: 1;
+    }
 
-        .composer-wrapper.open {
-            max-height: 1200px; /* Large enough to never clip */
-            margin-bottom: 3rem;
-        }
+    /* Header */
+    .journal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
 
-        .composer {
-            background: #202327;
-            border-radius: 12px;
-            padding: 2rem;
-            border: 1px solid rgba(113, 128, 150, 0.1);
-        }
+    .journal-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
 
-        .composer input, .composer textarea {
-            width: 100%;
-            background: transparent;
-            border: none;
-            color: var(--text-main);
-            outline: none;
-            margin-bottom: 1.5rem;
-        }
+    .btn-add {
+      background: var(--accent-dim);
+      border: 1px solid rgba(167, 139, 250, 0.3);
+      color: var(--accent);
+      font-family: 'Quicksand', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      padding: 0.45rem 1rem;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s;
+    }
 
-        .composer input {
-            font-family: var(--font-ui);
-            font-size: 1.4rem;
-            font-weight: 500;
-            border-bottom: 1px solid rgba(113, 128, 150, 0.2);
-            padding-bottom: 0.5rem;
-        }
+    .btn-add:hover {
+      background: rgba(167, 139, 250, 0.25);
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
 
-        .composer textarea {
-            font-family: var(--font-ink);
-            font-size: 1.3rem;
-            resize: vertical;
-            min-height: 120px;
-            line-height: 1.7;
-        }
+    /* ─── COMPOSER ────────────────────────────────── */
+    .composer-wrapper {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      margin-bottom: 0;
+    }
 
-        .composer-actions {
-            text-align: right;
-        }
+    .composer-wrapper.open {
+      max-height: 2000px;
+      margin-bottom: 2.5rem;
+    }
 
-        .submit-btn {
-            background: var(--accent);
-            color: var(--bg-color);
-            border: none;
-            font-family: var(--font-ui);
-            font-size: 0.9rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-            padding: 0.5rem 1.5rem;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: opacity 0.3s;
-        }
+    .composer {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
 
-        .submit-btn:hover { opacity: 0.8; }
+    .composer-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      display: block;
+    }
 
-        /* --- Timeline Structure --- */
-        .timeline {
-            position: relative;
-            padding-left: 2.5rem;
-        }
+    .composer input[type="text"],
+    .composer textarea {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 0.75rem 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
 
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 7px;
-            top: 10px;
-            bottom: 0;
-            width: 1px;
-            background: linear-gradient(to bottom, var(--text-muted) 85%, transparent);
-            opacity: 0.3;
-        }
+    .composer input[type="text"] {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 0.95rem;
+    }
 
-        .journal-entry {
-            position: relative;
-            margin-bottom: 4rem;
-            cursor: pointer;
-        }
+    .composer input[type="text"]:focus,
+    .composer textarea:focus {
+      border-color: rgba(167, 139, 250, 0.5);
+    }
 
-        .journal-entry::before {
-            content: '';
-            position: absolute;
-            left: -37px;
-            top: 8px;
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background-color: var(--text-muted);
-            transition: all 0.4s ease;
-        }
+    .composer textarea {
+      font-family: 'Kalam', cursive;
+      font-size: 1rem;
+      line-height: 1.7;
+      resize: vertical;
+      min-height: 140px;
+    }
 
-        .journal-entry:hover::before, .journal-entry.active::before {
-            background-color: var(--accent);
-            box-shadow: 0 0 10px var(--accent);
-            transform: scale(1.4);
-        }
+    .composer-footer {
+      display: flex;
+      justify-content: flex-end;
+    }
 
-        .entry-date {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            letter-spacing: 2px;
-            margin-bottom: 0.3rem;
-        }
+    .btn-record {
+      background: var(--accent);
+      border: none;
+      color: #1a1c1e;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.55rem 1.4rem;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+    }
 
-        .entry-title {
-            font-size: 1.4rem;
-            font-weight: 500;
-            color: var(--text-main);
-            transition: color 0.3s;
-        }
+    .btn-record:hover {
+      opacity: 0.88;
+      transform: translateY(-1px);
+    }
 
-        .journal-entry:hover .entry-title, .journal-entry.active .entry-title {
-            color: var(--accent);
-        }
+    /* ─── TIMELINE ────────────────────────────────── */
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+    }
 
-        .entry-content-wrapper {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-out;
-        }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 6px;
+      bottom: 0;
+      width: 1.5px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      opacity: 0.3;
+    }
 
-        .entry-content {
-            font-family: var(--font-ink);
-            font-size: 1.3rem; /* Kalam needs to be slightly larger to read easily */
-            color: #b0b9c1;
-            padding-top: 1.5rem;
-            white-space: pre-line;
-            line-height: 1.8;
-        }
+    .entry {
+      position: relative;
+      margin-bottom: 1.25rem;
+      cursor: pointer;
+    }
 
-        .journal-entry.active .entry-content-wrapper {
-            max-height: 2500px;
-        }
-    </style>
+    .entry::before {
+      content: '';
+      position: absolute;
+      left: -1.75rem;
+      top: 1.1rem;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 1.5px solid var(--muted);
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    }
+
+    .entry.active::before,
+    .entry:hover::before {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+      box-shadow: 0 0 0 4px var(--accent-glow);
+    }
+
+    .entry-header {
+      padding: 1rem 1.25rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: border-color 0.2s, background 0.2s;
+      user-select: none;
+    }
+
+    .entry.active .entry-header,
+    .entry:hover .entry-header {
+      border-color: rgba(167, 139, 250, 0.25);
+      background: var(--surface2);
+    }
+
+    .entry-date {
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 500;
+      margin-bottom: 0.3rem;
+    }
+
+    .entry-title {
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .entry-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .entry.active .entry-body {
+      max-height: 1200px;
+    }
+
+    .entry-body-inner {
+      padding: 1rem 1.25rem 1.25rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 var(--radius) var(--radius);
+      font-family: 'Kalam', cursive;
+      font-size: 1rem;
+      line-height: 1.75;
+      color: var(--text);
+      white-space: pre-wrap;
+    }
+
+    .entry-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.6rem;
+      margin-top: 1rem;
+    }
+
+    .btn-edit, .btn-delete {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.85rem;
+      border-radius: 100px;
+      cursor: pointer;
+      border: 1px solid;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .btn-edit {
+      background: transparent;
+      border-color: rgba(167, 139, 250, 0.35);
+      color: var(--accent);
+    }
+
+    .btn-edit:hover {
+      background: var(--accent-dim);
+      transform: translateY(-1px);
+    }
+
+    .btn-delete {
+      background: transparent;
+      border-color: rgba(248, 113, 113, 0.3);
+      color: var(--danger);
+    }
+
+    .btn-delete:hover {
+      background: rgba(248, 113, 113, 0.1);
+      transform: translateY(-1px);
+    }
+
+    /* ─── EMPTY STATE ─────────────────────────────── */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 1rem;
+      color: var(--muted);
+    }
+
+    .empty-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      opacity: 0.4;
+    }
+
+    .empty-state p {
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* ─── EDIT MODAL ──────────────────────────────── */
+    #edit-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 11, 13, 0.88);
+      backdrop-filter: blur(6px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    #edit-modal.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      width: 100%;
+      max-width: 560px;
+      margin: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      transform: translateY(16px);
+      transition: transform 0.3s ease;
+    }
+
+    #edit-modal.open .modal-card {
+      transform: translateY(0);
+    }
+
+    .modal-entry-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text);
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+
+    #edit-date {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Quicksand', sans-serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+      padding: 0.65rem 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    #edit-date:focus {
+      border-color: rgba(167, 139, 250, 0.5);
+    }
+
+    #edit-content {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Kalam', cursive;
+      font-size: 1rem;
+      line-height: 1.7;
+      padding: 0.75rem 1rem;
+      outline: none;
+      resize: vertical;
+      min-height: 160px;
+      transition: border-color 0.2s;
+    }
+
+    #edit-content:focus {
+      border-color: rgba(167, 139, 250, 0.5);
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+
+    .btn-cancel {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: 'Quicksand', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.5rem 1.2rem;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .btn-cancel:hover {
+      border-color: var(--muted);
+      color: var(--text);
+    }
+
+    .btn-save {
+      background: var(--accent);
+      border: none;
+      color: #1a1c1e;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.5rem 1.4rem;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+
+    .btn-save:hover {
+      opacity: 0.88;
+      transform: translateY(-1px);
+    }
+
+    /* ─── DECORATIVE BG ───────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -30%;
+      right: -20%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(167, 139, 250, 0.04) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #journal, #lock-screen { position: relative; z-index: 1; }
+
+    /* ─── SCROLLBAR ───────────────────────────────── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 10px; }
+  </style>
 </head>
 <body>
-    <div id="lock-screen">
-        <h1>SOLOSORTIE</h1>
-        <input type="password" id="password-input" placeholder="password" autofocus>
-    </div>
 
-    <div id="journal-container">
-        
-        <header>
-            <h2>Log</h2>
-            <button class="add-btn" onclick="toggleComposer()">+ Add Entry</button>
-        </header>
+  <!-- Lock Screen -->
+  <div id="lock-screen">
+    <p class="lock-subtitle">personal field journal</p>
+    <h1 class="lock-title">Solo<span>Sortie</span></h1>
+    <input id="lock-input" type="password" placeholder="· · · · · ·" autocomplete="off" />
+  </div>
 
-        <div class="composer-wrapper" id="composer-panel">
-            <div class="composer">
-                <input type="text" id="new-title" placeholder="Title" autocomplete="off">
-                <textarea id="new-content" placeholder="Write here champ."></textarea>
-                <div class="composer-actions">
-                    <button class="submit-btn" onclick="addEntry()">Record</button>
-                </div>
-            </div>
+  <!-- Journal -->
+  <div id="journal">
+    <header class="journal-header">
+      <span class="journal-title">Log</span>
+      <button class="btn-add" id="btn-add">+ Add Entry</button>
+    </header>
+
+    <!-- Composer -->
+    <div class="composer-wrapper" id="composer-wrapper">
+      <div class="composer">
+        <div>
+          <label class="composer-label" for="new-title">Title</label>
+          <input type="text" id="new-title" placeholder="Name this moment…" />
         </div>
-
-        <div class="timeline" id="timeline-target">
-            </div>
-
+        <div>
+          <label class="composer-label" for="new-content">Entry</label>
+          <textarea id="new-content" placeholder="Write it down…"></textarea>
+        </div>
+        <div class="composer-footer">
+          <button class="btn-record" id="btn-record">Record</button>
+        </div>
+      </div>
     </div>
 
-    <script>
-        // ==========================================
-        // MASTER CONFIGURATION
-        // ==========================================
-        const PASSWORD_ENABLED = false; 
-        const JOURNAL_PASSWORD = "none";
+    <!-- Timeline -->
+    <div class="timeline" id="timeline"></div>
+  </div>
 
-        const lockScreen = document.getElementById('lock-screen');
-        const passwordInput = document.getElementById('password-input');
-        const journalContainer = document.getElementById('journal-container');
-        const timelineTarget = document.getElementById('timeline-target');
-        const composerPanel = document.getElementById('composer-panel');
+  <!-- Edit Modal -->
+  <div id="edit-modal">
+    <div class="modal-card">
+      <div class="modal-entry-title" id="modal-title-display"></div>
+      <div>
+        <label class="modal-label" for="edit-date">Date</label>
+        <input type="text" id="edit-date" />
+      </div>
+      <div>
+        <label class="modal-label" for="edit-content">Content</label>
+        <textarea id="edit-content"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" id="btn-cancel">Cancel</button>
+        <button class="btn-save" id="btn-save">Save</button>
+      </div>
+    </div>
+  </div>
 
-        // ==========================================
-        // DATABASE LOGIC (CLOUDFLARE API)
-        // ==========================================
-        
-        async function loadTimeline() {
-            try {
-                const response = await fetch('/api/entries');
-                const journalEntries = await response.json();
-                
-                if (journalEntries.length === 0) {
-                    timelineTarget.innerHTML = `<div style="color:var(--text-muted); font-family:var(--font-ui);">No entries exist yet. The page is blank.</div>`;
-                    return;
-                }
+  <script>
+    const PASSWORD_ENABLED = false;
+    const JOURNAL_PASSWORD = "none";
 
-                timelineTarget.innerHTML = journalEntries.map(entry => `
-                    <div class="journal-entry" onclick="toggleEntry(this)">
-                        <div class="entry-date">${entry.date}</div>
-                        <div class="entry-title">${entry.title}</div>
-                        <div class="entry-content-wrapper">
-                            <div class="entry-content">${entry.content}</div>
-                        </div>
-                    </div>
-                `).join('');
-            } catch (err) {
-                timelineTarget.innerHTML = `<div style="color:#ef4444; font-family:var(--font-ui);">Could not connect to D1 Database.</div>`;
-            }
+    // ─── DOM refs ────────────────────────────────────
+    const lockScreen      = document.getElementById('lock-screen');
+    const lockInput       = document.getElementById('lock-input');
+    const journal         = document.getElementById('journal');
+    const btnAdd          = document.getElementById('btn-add');
+    const composerWrapper = document.getElementById('composer-wrapper');
+    const newTitle        = document.getElementById('new-title');
+    const newContent      = document.getElementById('new-content');
+    const btnRecord       = document.getElementById('btn-record');
+    const timeline        = document.getElementById('timeline');
+    const editModal       = document.getElementById('edit-modal');
+    const modalTitleDisplay = document.getElementById('modal-title-display');
+    const editDate        = document.getElementById('edit-date');
+    const editContent     = document.getElementById('edit-content');
+    const btnCancel       = document.getElementById('btn-cancel');
+    const btnSave         = document.getElementById('btn-save');
+
+    let editingId = null;
+    let composerOpen = false;
+
+    // ─── Helpers ─────────────────────────────────────
+    function formatDate(d) {
+      const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+      const date = d ? new Date(d) : new Date();
+      return `${months[date.getMonth()]} ${String(date.getDate()).padStart(2,'0')}, ${date.getFullYear()}`;
+    }
+
+    function todayFormatted() {
+      const now = new Date();
+      const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+      return `${months[now.getMonth()]} ${String(now.getDate()).padStart(2,'0')}, ${now.getFullYear()}`;
+    }
+
+    // ─── Lock screen ─────────────────────────────────
+    function unlockJournal() {
+      lockScreen.classList.add('hidden');
+      journal.classList.add('visible');
+      loadEntries();
+    }
+
+    if (!PASSWORD_ENABLED) {
+      unlockJournal();
+    } else {
+      lockInput.focus();
+      lockInput.addEventListener('keydown', e => {
+        if (e.key !== 'Enter') return;
+        if (lockInput.value === JOURNAL_PASSWORD) {
+          unlockJournal();
+        } else {
+          lockInput.classList.add('error');
+          lockInput.value = '';
+          setTimeout(() => lockInput.classList.remove('error'), 700);
         }
+      });
+    }
 
-        function getFormattedDate() {
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            return new Date().toLocaleDateString('en-US', options).toUpperCase();
-        }
+    // ─── Composer toggle ─────────────────────────────
+    btnAdd.addEventListener('click', () => {
+      composerOpen = !composerOpen;
+      composerWrapper.classList.toggle('open', composerOpen);
+      btnAdd.textContent = composerOpen ? '✕ Close' : '+ Add Entry';
+      if (composerOpen) setTimeout(() => newTitle.focus(), 300);
+    });
 
-        async function addEntry() {
-            const titleInput = document.getElementById('new-title');
-            const contentInput = document.getElementById('new-content');
+    // ─── Record entry ─────────────────────────────────
+    btnRecord.addEventListener('click', async () => {
+      const title   = newTitle.value.trim();
+      const content = newContent.value.trim();
+      if (!title && !content) return;
 
-            if (!titleInput.value.trim() || !contentInput.value.trim()) return;
+      const date = todayFormatted();
 
-            const payload = {
-                date: getFormattedDate(),
-                title: titleInput.value.trim(),
-                content: contentInput.value.trim()
-            };
+      try {
+        const res = await fetch('/api/entries', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ date, title, content })
+        });
+        if (!res.ok) throw new Error('Failed to save');
+        newTitle.value = '';
+        newContent.value = '';
+        composerOpen = false;
+        composerWrapper.classList.remove('open');
+        btnAdd.textContent = '+ Add Entry';
+        await loadEntries();
+      } catch (err) {
+        console.error(err);
+      }
+    });
 
-            // Lock inputs while saving
-            titleInput.disabled = true;
-            contentInput.disabled = true;
+    // ─── Load & render entries ────────────────────────
+    async function loadEntries() {
+      try {
+        const res = await fetch('/api/entries');
+        const entries = await res.json();
+        renderTimeline(entries);
+      } catch (err) {
+        console.error(err);
+      }
+    }
 
-            try {
-                const response = await fetch('/api/entries', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+    function renderTimeline(entries) {
+      timeline.innerHTML = '';
 
-                if (response.ok) {
-                    titleInput.value = '';
-                    contentInput.value = '';
-                    toggleComposer(); // Close panel automatically
-                    await loadTimeline(); // Refresh list from DB
-                } else {
-                    alert("Failed to write to database.");
-                }
-            } catch (e) {
-                alert("Network error.");
-            }
+      if (!entries || entries.length === 0) {
+        timeline.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">✦</div>
+            <p>No entries yet. Begin your record.</p>
+          </div>`;
+        return;
+      }
 
-            titleInput.disabled = false;
-            contentInput.disabled = false;
-        }
+      entries.forEach(entry => {
+        const el = document.createElement('div');
+        el.className = 'entry';
+        el.dataset.id = entry.id;
 
-        // ==========================================
-        // UI INTERACTIONS
-        // ==========================================
+        el.innerHTML = `
+          <div class="entry-header">
+            <div class="entry-date">${entry.date || ''}</div>
+            <div class="entry-title">${escapeHtml(entry.title || '(untitled)')}</div>
+          </div>
+          <div class="entry-body">
+            <div class="entry-body-inner">
+              ${escapeHtml(entry.content || '')}
+              <div class="entry-actions">
+                <button class="btn-edit" data-id="${entry.id}" data-title="${escapeAttr(entry.title)}" data-date="${escapeAttr(entry.date)}" data-content="${escapeAttr(entry.content)}">Edit</button>
+                <button class="btn-delete" data-id="${entry.id}">Delete</button>
+              </div>
+            </div>
+          </div>`;
 
-        function toggleComposer() {
-            composerPanel.classList.toggle('open');
-        }
+        // Toggle expand
+        el.querySelector('.entry-header').addEventListener('click', () => {
+          const wasActive = el.classList.contains('active');
+          document.querySelectorAll('.entry.active').forEach(e => e.classList.remove('active'));
+          if (!wasActive) el.classList.add('active');
+        });
 
-        function toggleEntry(element) {
-            // Prevent toggling if user is highlighting text
-            const selection = window.getSelection().toString();
-            if(selection.length > 0) return;
-            element.classList.toggle('active');
-        }
+        // Edit
+        el.querySelector('.btn-edit').addEventListener('click', e => {
+          e.stopPropagation();
+          openEditModal(
+            entry.id,
+            entry.title,
+            entry.date,
+            entry.content
+          );
+        });
 
-        function revealJournal() {
-            lockScreen.style.opacity = '0';
-            setTimeout(() => {
-                lockScreen.style.display = 'none';
-                document.body.style.alignItems = 'flex-start';
-                journalContainer.style.display = 'block';
-                setTimeout(() => {
-                    journalContainer.style.opacity = '1';
-                    journalContainer.style.transform = 'translateY(0)';
-                }, 50);
-            }, 600);
-        }
+        // Delete
+        el.querySelector('.btn-delete').addEventListener('click', e => {
+          e.stopPropagation();
+          deleteEntry(entry.id);
+        });
 
-        // Boot Sequence
-        (function init() {
-            loadTimeline(); 
-            
-            if (!PASSWORD_ENABLED) {
-                lockScreen.style.display = 'none';
-                document.body.style.alignItems = 'flex-start';
-                journalContainer.style.display = 'block';
-                journalContainer.style.opacity = '1';
-                journalContainer.style.transform = 'translateY(0)';
-            } else {
-                passwordInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        if (passwordInput.value === JOURNAL_PASSWORD) revealJournal();
-                        else {
-                            passwordInput.value = '';
-                            passwordInput.style.borderColor = '#ef4444';
-                            setTimeout(() => passwordInput.style.borderColor = 'var(--text-muted)', 500);
-                        }
-                    }
-                });
-            }
-        })();
-    </script>
+        timeline.appendChild(el);
+      });
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function escapeAttr(str) {
+      if (!str) return '';
+      return str.replace(/"/g, '&quot;').replace(/\n/g, '&#10;');
+    }
+
+    // ─── Delete ───────────────────────────────────────
+    async function deleteEntry(id) {
+      if (!confirm('Delete this entry?')) return;
+      try {
+        const res = await fetch(`/api/entries/${id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error('Delete failed');
+        await loadEntries();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // ─── Edit Modal ───────────────────────────────────
+    function openEditModal(id, title, date, content) {
+      editingId = id;
+      modalTitleDisplay.textContent = title || '(untitled)';
+      editDate.value = date || '';
+      editContent.value = content || '';
+      editModal.classList.add('open');
+      setTimeout(() => editContent.focus(), 300);
+    }
+
+    function closeEditModal() {
+      editModal.classList.remove('open');
+      editingId = null;
+    }
+
+    btnCancel.addEventListener('click', closeEditModal);
+
+    editModal.addEventListener('click', e => {
+      if (e.target === editModal) closeEditModal();
+    });
+
+    btnSave.addEventListener('click', async () => {
+      if (!editingId) return;
+      const date    = editDate.value.trim();
+      const content = editContent.value.trim();
+
+      try {
+        const res = await fetch(`/api/entries/${editingId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ date, content })
+        });
+        if (!res.ok) throw new Error('Save failed');
+        closeEditModal();
+        await loadEntries();
+      } catch (err) {
+        console.error(err);
+      }
+    });
+  </script>
 </body>
 </html>
