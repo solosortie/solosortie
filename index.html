@@ -13,14 +13,11 @@
             --text: #e2e8f0;
             --muted: #718096;
             --accent: #a78bfa;
-            --accent-glow: rgba(167,139,250,0.25);
             --card: #202327;
             --font-ui: 'Quicksand', sans-serif;
             --font-ink: 'Kalam', cursive;
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; }
-
         body {
             background: var(--bg);
             color: var(--text);
@@ -33,14 +30,14 @@
             overflow-x: hidden;
         }
 
-        /* ── LOCK ───────────────────────────────────────── */
+        /* LOCK */
         #lock-screen {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            transition: opacity 0.6s ease;
+            transition: opacity 0.5s ease;
         }
         #lock-screen h1 {
             font-size: 1.4rem;
@@ -65,74 +62,63 @@
         }
         #password-input:focus { border-color: var(--accent); }
 
-        /* ── JOURNAL ────────────────────────────────────── */
+        /* JOURNAL */
         #journal-container {
             display: none;
             width: 100%;
-            max-width: 720px;
-            padding: 3.5rem 2rem 8rem;
+            max-width: 680px;
+            padding: 3.5rem 2rem 6rem;
             opacity: 0;
-            transform: translateY(14px);
-            transition: opacity 0.7s ease, transform 0.7s ease;
+            transform: translateY(12px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
         }
 
-        /* ── HEADER ─────────────────────────────────────── */
+        /* HEADER */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 3.5rem;
+            margin-bottom: 3rem;
             padding-bottom: 1rem;
-            border-bottom: 1px solid rgba(113,128,150,0.12);
+            border-bottom: 1px solid rgba(113,128,150,0.15);
         }
         header h2 {
-            font-size: 0.85rem;
+            font-size: 1rem;
             font-weight: 400;
-            letter-spacing: 6px;
+            letter-spacing: 5px;
             color: var(--muted);
             text-transform: uppercase;
         }
         .add-btn {
             background: transparent;
-            border: 1px solid rgba(113,128,150,0.35);
+            border: 1px solid rgba(113,128,150,0.4);
             color: var(--muted);
             font-family: var(--font-ui);
-            font-size: 0.78rem;
+            font-size: 0.8rem;
             font-weight: 600;
             letter-spacing: 1px;
-            padding: 0.38rem 1.1rem;
+            padding: 0.4rem 1.2rem;
             border-radius: 20px;
             cursor: pointer;
-            transition: border-color 0.3s, color 0.3s, box-shadow 0.3s;
+            transition: all 0.25s;
         }
-        .add-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-            box-shadow: 0 0 12px var(--accent-glow);
-        }
+        .add-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-        /* ── COMPOSER ───────────────────────────────────── */
+        /* COMPOSER */
         .composer-wrapper {
-            display: grid;
-            grid-template-rows: 0fr;
-            transition: grid-template-rows 0.5s cubic-bezier(0.4,0,0.2,1),
-                        margin-bottom 0.5s cubic-bezier(0.4,0,0.2,1),
-                        opacity 0.4s ease;
-            opacity: 0;
-            margin-bottom: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.55s cubic-bezier(0.4,0,0.2,1);
         }
         .composer-wrapper.open {
-            grid-template-rows: 1fr;
-            opacity: 1;
-            margin-bottom: 3.5rem;
+            max-height: 2000px;
+            margin-bottom: 3rem;
         }
-        .composer-inner { overflow: hidden; }
         .composer {
             background: var(--card);
-            border-radius: 16px;
+            border-radius: 14px;
             padding: 1.8rem;
             border: 1px solid rgba(113,128,150,0.1);
-            margin-bottom: 2px;
         }
         .composer input[type="text"],
         .composer textarea {
@@ -147,19 +133,17 @@
             font-family: var(--font-ui);
             font-size: 1.3rem;
             font-weight: 500;
-            border-bottom: 1px solid rgba(113,128,150,0.18);
+            border-bottom: 1px solid rgba(113,128,150,0.2);
             padding-bottom: 0.6rem;
-            margin-bottom: 1.3rem;
-            transition: border-color 0.3s;
+            margin-bottom: 1.4rem;
         }
-        .composer input[type="text"]:focus { border-color: rgba(167,139,250,0.4); }
         .composer textarea {
             font-family: var(--font-ink);
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             resize: vertical;
             min-height: 130px;
             line-height: 1.75;
-            margin-bottom: 1.3rem;
+            margin-bottom: 1.4rem;
         }
         .composer-actions { text-align: right; }
         .record-btn {
@@ -167,279 +151,159 @@
             color: var(--bg);
             border: none;
             font-family: var(--font-ui);
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             font-weight: 700;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
             padding: 0.5rem 1.6rem;
             border-radius: 20px;
             cursor: pointer;
-            transition: opacity 0.2s, box-shadow 0.2s, transform 0.15s;
+            transition: opacity 0.2s;
         }
-        .record-btn:hover {
-            opacity: 0.88;
-            box-shadow: 0 4px 18px var(--accent-glow);
-            transform: translateY(-1px);
-        }
-        .record-btn:active { transform: translateY(0); }
-        .record-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .record-btn:hover { opacity: 0.8; }
 
-        /* ── HORIZONTAL TIMELINE ────────────────────────── */
-        .timeline-track-wrapper {
-            position: relative;
-            width: 100%;
-            padding: 60px 0 80px;
-            overflow: visible;
-        }
-
-        /* the line */
-        .timeline-line {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(
-                to right,
-                transparent 0%,
-                rgba(113,128,150,0.3) 8%,
-                rgba(113,128,150,0.3) 92%,
-                transparent 100%
-            );
-            transform: translateY(-50%);
-        }
-
-        /* scrollable dot row */
-        .timeline-track {
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 0;
-            overflow-x: auto;
-            overflow-y: visible;
-            padding: 0 2rem;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-            min-height: 140px;
-        }
-        .timeline-track::-webkit-scrollbar { display: none; }
-
-        /* each entry slot */
-        .tl-entry {
-            position: relative;
+        /* TIMELINE — centered vertical spine */
+        .timeline {
             display: flex;
             flex-direction: column;
             align-items: center;
-            flex-shrink: 0;
-            cursor: pointer;
-            padding: 0 28px;
+            width: 100%;
         }
-
-        /* the dot */
-        .tl-dot {
-            width: 10px;
-            height: 10px;
+        .timeline-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .timeline-dot {
+            width: 9px;
+            height: 9px;
             border-radius: 50%;
             background: var(--muted);
-            position: relative;
-            z-index: 2;
-            transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1),
-                        background 0.3s ease,
-                        box-shadow 0.3s ease;
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+        .timeline-node.active .timeline-dot,
+        .timeline-node:hover .timeline-dot {
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent);
+        }
+        .timeline-connector {
+            width: 1px;
+            background: rgba(113,128,150,0.25);
             flex-shrink: 0;
         }
-        .tl-entry:hover .tl-dot,
-        .tl-entry.active .tl-dot {
-            background: var(--accent);
-            box-shadow: 0 0 0 3px rgba(167,139,250,0.2), 0 0 14px rgba(167,139,250,0.5);
-            transform: scale(1.5);
-        }
+        .connector-top { height: 16px; }
+        .connector-bottom { height: 28px; }
+        .timeline-node:last-child .connector-bottom { display: none; }
 
-        /* hover preview card — floats ABOVE the line */
-        .tl-preview {
-            position: absolute;
-            bottom: calc(100% + 18px);
-            left: 50%;
-            transform: translateX(-50%) translateY(6px);
-            background: #26292e;
-            border: 1px solid rgba(167,139,250,0.2);
-            border-radius: 10px;
-            padding: 0.7rem 1rem;
-            width: 160px;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.34,1.2,0.64,1);
-            z-index: 10;
-            text-align: center;
+        /* ENTRY CARD */
+        .entry-card {
+            width: 100%;
+            background: var(--card);
+            border: 1px solid rgba(113,128,150,0.1);
+            border-radius: 14px;
+            padding: 1.3rem 1.5rem;
+            cursor: pointer;
+            transition: border-color 0.25s;
         }
-        .tl-entry:hover .tl-preview {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
+        .timeline-node:hover .entry-card,
+        .timeline-node.active .entry-card {
+            border-color: rgba(167,139,250,0.25);
         }
-        .tl-preview-date {
-            font-size: 0.62rem;
+        .entry-date {
+            font-size: 0.7rem;
             font-weight: 700;
-            letter-spacing: 2px;
+            letter-spacing: 2.5px;
             color: var(--muted);
             text-transform: uppercase;
-            margin-bottom: 0.2rem;
+            margin-bottom: 0.25rem;
         }
-        .tl-preview-title {
-            font-size: 0.85rem;
-            font-weight: 600;
+        .entry-title {
+            font-size: 1.2rem;
+            font-weight: 500;
             color: var(--text);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            transition: color 0.25s;
         }
-        /* small pointer triangle */
-        .tl-preview::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 5px solid transparent;
-            border-top-color: rgba(167,139,250,0.2);
-        }
+        .timeline-node:hover .entry-title,
+        .timeline-node.active .entry-title { color: var(--accent); }
 
-        /* ── ENTRY MODAL ────────────────────────────────── */
-        #entry-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(10,11,13,0.82);
-            z-index: 50;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
+        .entry-content-wrapper {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.45s ease-out;
         }
-        #entry-modal.open {
-            display: flex;
-            animation: modalFadeIn 0.3s cubic-bezier(0.4,0,0.2,1) forwards;
-        }
-        @keyframes modalFadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        .entry-modal-box {
-            background: #1e2124;
-            border-radius: 18px;
-            padding: 2.2rem 2.4rem;
-            width: 100%;
-            max-width: 600px;
-            max-height: 85vh;
-            overflow-y: auto;
-            border: 1px solid rgba(113,128,150,0.12);
-            animation: modalSlideUp 0.35s cubic-bezier(0.34,1.2,0.64,1) forwards;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(113,128,150,0.2) transparent;
-        }
-        @keyframes modalSlideUp {
-            from { transform: translateY(24px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        .entry-modal-date {
-            font-size: 0.68rem;
-            font-weight: 700;
-            letter-spacing: 3px;
-            color: var(--accent);
-            text-transform: uppercase;
-            margin-bottom: 0.5rem;
-        }
-        .entry-modal-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--text);
-            margin-bottom: 1.6rem;
-            line-height: 1.3;
-        }
-        .entry-modal-content {
+        .timeline-node.active .entry-content-wrapper { max-height: 3000px; }
+
+        .entry-content {
             font-family: var(--font-ink);
             font-size: 1.2rem;
             color: #b0b9c1;
+            padding-top: 1.1rem;
             white-space: pre-line;
-            line-height: 1.9;
-            margin-bottom: 2rem;
+            line-height: 1.85;
         }
-        .entry-modal-actions {
+        .entry-actions {
             display: flex;
             justify-content: flex-end;
             gap: 0.6rem;
-            padding-top: 1.2rem;
+            margin-top: 1.2rem;
+            padding-top: 1rem;
             border-top: 1px solid rgba(113,128,150,0.1);
         }
-        .modal-close-btn {
-            position: absolute;
-            top: 0;
-            right: 0;
-        }
-        .entry-edit-btn, .entry-delete-btn, .entry-close-btn {
+        .entry-edit-btn, .entry-delete-btn {
             background: transparent;
             font-family: var(--font-ui);
             font-size: 0.72rem;
             font-weight: 600;
             letter-spacing: 1px;
-            padding: 0.32rem 1rem;
+            padding: 0.3rem 1rem;
             border-radius: 20px;
             cursor: pointer;
             transition: all 0.2s;
             text-transform: uppercase;
         }
-        .entry-close-btn {
-            border: 1px solid rgba(113,128,150,0.25);
-            color: var(--muted);
-            margin-right: auto;
-        }
-        .entry-close-btn:hover { border-color: var(--muted); color: var(--text); }
         .entry-edit-btn {
-            border: 1px solid rgba(167,139,250,0.35);
+            border: 1px solid rgba(167,139,250,0.4);
             color: var(--accent);
         }
         .entry-edit-btn:hover { background: rgba(167,139,250,0.1); }
         .entry-delete-btn {
-            border: 1px solid rgba(239,68,68,0.28);
+            border: 1px solid rgba(239,68,68,0.3);
             color: #ef4444;
         }
         .entry-delete-btn:hover { background: rgba(239,68,68,0.08); }
 
-        /* ── EDIT MODAL ─────────────────────────────────── */
+        /* EDIT MODAL */
         #edit-modal {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(10,11,13,0.85);
+            background: rgba(0,0,0,0.75);
             z-index: 100;
             align-items: center;
             justify-content: center;
             padding: 2rem;
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
         }
-        #edit-modal.open {
-            display: flex;
-            animation: modalFadeIn 0.25s ease forwards;
-        }
+        #edit-modal.open { display: flex; }
         .modal-box {
             background: #22262b;
-            border-radius: 18px;
-            padding: 2rem 2.2rem;
+            border-radius: 16px;
+            padding: 2rem;
             width: 100%;
             max-width: 560px;
-            border: 1px solid rgba(113,128,150,0.12);
-            animation: modalSlideUp 0.3s cubic-bezier(0.34,1.2,0.64,1) forwards;
+            border: 1px solid rgba(113,128,150,0.15);
         }
         .modal-entry-title {
-            font-size: 1.15rem;
+            font-size: 1.2rem;
             font-weight: 500;
             color: var(--accent);
             margin-bottom: 1.5rem;
         }
         .modal-label {
-            font-size: 0.65rem;
+            font-size: 0.68rem;
             font-weight: 700;
-            letter-spacing: 2.5px;
+            letter-spacing: 2px;
             color: var(--muted);
             text-transform: uppercase;
             margin-bottom: 0.4rem;
@@ -448,7 +312,7 @@
             width: 100%;
             background: transparent;
             border: none;
-            border-bottom: 1px solid rgba(113,128,150,0.22);
+            border-bottom: 1px solid rgba(113,128,150,0.25);
             color: var(--text);
             font-family: var(--font-ui);
             font-size: 0.95rem;
@@ -456,26 +320,22 @@
             outline: none;
             margin-bottom: 1.4rem;
             letter-spacing: 1px;
-            transition: border-color 0.3s;
         }
-        #edit-date:focus { border-color: rgba(167,139,250,0.5); }
         #edit-content {
             width: 100%;
             background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(113,128,150,0.12);
-            border-radius: 10px;
+            border: 1px solid rgba(113,128,150,0.15);
+            border-radius: 8px;
             color: var(--text);
             font-family: var(--font-ink);
-            font-size: 1.15rem;
-            padding: 0.9rem 1rem;
+            font-size: 1.2rem;
+            padding: 0.8rem 1rem;
             outline: none;
             resize: vertical;
             min-height: 160px;
             line-height: 1.8;
             margin-bottom: 1.6rem;
-            transition: border-color 0.3s;
         }
-        #edit-content:focus { border-color: rgba(167,139,250,0.3); }
         .modal-actions {
             display: flex;
             justify-content: flex-end;
@@ -483,7 +343,7 @@
         }
         .modal-cancel-btn {
             background: transparent;
-            border: 1px solid rgba(113,128,150,0.28);
+            border: 1px solid rgba(113,128,150,0.3);
             color: var(--muted);
             font-family: var(--font-ui);
             font-size: 0.82rem;
@@ -505,96 +365,46 @@
             padding: 0.5rem 1.6rem;
             border-radius: 20px;
             cursor: pointer;
-            transition: opacity 0.2s, box-shadow 0.2s;
+            transition: opacity 0.2s;
         }
-        .modal-save-btn:hover { opacity: 0.85; box-shadow: 0 4px 16px var(--accent-glow); }
-
-        /* ── TOAST ──────────────────────────────────────── */
-        #toast {
-            position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%) translateY(10px);
-            background: #2d3139;
-            color: var(--text);
-            font-family: var(--font-ui);
-            font-size: 0.82rem;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-            padding: 0.6rem 1.4rem;
-            border-radius: 20px;
-            border: 1px solid rgba(113,128,150,0.15);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            z-index: 200;
-        }
-        #toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-        #toast.error { border-color: rgba(239,68,68,0.3); color: #ef4444; }
+        .modal-save-btn:hover { opacity: 0.8; }
 
         .empty-state {
             color: var(--muted);
             font-family: var(--font-ui);
             text-align: center;
-            padding: 3rem 0;
-            font-size: 0.88rem;
-            letter-spacing: 1.5px;
+            padding: 2rem 0;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
         }
     </style>
 </head>
 <body>
 
-    <!-- LOCK -->
     <div id="lock-screen">
         <h1>SOLOSORTIE</h1>
         <input type="password" id="password-input" placeholder="password" autofocus>
     </div>
 
-    <!-- JOURNAL -->
     <div id="journal-container">
         <header>
             <h2>Log</h2>
             <button class="add-btn" onclick="toggleComposer()">+ Add Entry</button>
         </header>
 
-        <!-- COMPOSER -->
         <div class="composer-wrapper" id="composer-panel">
-            <div class="composer-inner">
-                <div class="composer">
-                    <input type="text" id="new-title" placeholder="Title" autocomplete="off">
-                    <textarea id="new-content" placeholder="Write here champ."></textarea>
-                    <div class="composer-actions">
-                        <button class="record-btn" id="record-btn" onclick="addEntry()">Record</button>
-                    </div>
+            <div class="composer">
+                <input type="text" id="new-title" placeholder="Title" autocomplete="off">
+                <textarea id="new-content" placeholder="Write here champ."></textarea>
+                <div class="composer-actions">
+                    <button class="record-btn" onclick="addEntry()">Record</button>
                 </div>
             </div>
         </div>
 
-        <!-- HORIZONTAL TIMELINE -->
-        <div class="timeline-track-wrapper">
-            <div class="timeline-line"></div>
-            <div class="timeline-track" id="timeline-target"></div>
-        </div>
+        <div class="timeline" id="timeline-target"></div>
     </div>
 
-    <!-- ENTRY VIEW MODAL -->
-    <div id="entry-modal">
-        <div class="entry-modal-box">
-            <div class="entry-modal-date" id="view-date"></div>
-            <div class="entry-modal-title" id="view-title"></div>
-            <div class="entry-modal-content" id="view-content"></div>
-            <div class="entry-modal-actions">
-                <button class="entry-close-btn" onclick="closeEntryModal()">Close</button>
-                <button class="entry-edit-btn" onclick="openEditFromView()">Edit</button>
-                <button class="entry-delete-btn" onclick="deleteFromView()">Delete</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- EDIT MODAL -->
     <div id="edit-modal">
         <div class="modal-box">
             <div class="modal-entry-title" id="modal-title-display"></div>
@@ -603,45 +413,24 @@
             <div class="modal-label">Entry</div>
             <textarea id="edit-content"></textarea>
             <div class="modal-actions">
-                <button class="modal-cancel-btn" onclick="closeEditModal()">Cancel</button>
+                <button class="modal-cancel-btn" onclick="closeModal()">Cancel</button>
                 <button class="modal-save-btn" onclick="saveEdit()">Save</button>
             </div>
         </div>
     </div>
 
-    <!-- TOAST -->
-    <div id="toast"></div>
-
     <script>
         const PASSWORD_ENABLED = true;
         const JOURNAL_PASSWORD = "8282";
 
-        const lockScreen    = document.getElementById('lock-screen');
+        const lockScreen = document.getElementById('lock-screen');
         const passwordInput = document.getElementById('password-input');
         const journalContainer = document.getElementById('journal-container');
-        const timelineTarget   = document.getElementById('timeline-target');
-        const composerPanel    = document.getElementById('composer-panel');
-        const entryModal       = document.getElementById('entry-modal');
-        const editModal        = document.getElementById('edit-modal');
-        const toastEl          = document.getElementById('toast');
+        const timelineTarget = document.getElementById('timeline-target');
+        const composerPanel = document.getElementById('composer-panel');
+        const editModal = document.getElementById('edit-modal');
 
-        // in-memory store
-        let allEntries = [];
-        let viewingId  = null;
-        let editingId  = null;
-        let toastTimer = null;
-
-        // ── TOAST ─────────────────────────────────────────
-
-        function showToast(msg, isError = false) {
-            clearTimeout(toastTimer);
-            toastEl.textContent = msg;
-            toastEl.className = isError ? 'error' : '';
-            // force reflow
-            void toastEl.offsetWidth;
-            toastEl.classList.add('show');
-            toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2800);
-        }
+        let editingId = null;
 
         // ── DATA ──────────────────────────────────────────
 
@@ -649,29 +438,47 @@
             try {
                 const res = await fetch('/api/entries');
                 if (!res.ok) throw new Error('bad response');
-                allEntries = await res.json();
-                renderTimeline(allEntries);
-            } catch {
-                timelineTarget.innerHTML = '<div class="empty-state">Could not reach database.</div>';
-            }
-        }
+                const entries = await res.json();
 
-        function renderTimeline(entries) {
-            if (!entries.length) {
-                timelineTarget.innerHTML = '<div class="empty-state">No entries yet. The page is blank.</div>';
-                return;
-            }
+                if (!entries.length) {
+                    timelineTarget.innerHTML = '<div class="empty-state">No entries yet. The page is blank.</div>';
+                    return;
+                }
 
-            timelineTarget.innerHTML = entries.map((e, i) => `
-                <div class="tl-entry" data-id="${e.id}" onclick="openEntryModal(${e.id})"
-                     style="animation: dotAppear 0.4s cubic-bezier(0.34,1.56,0.64,1) ${i * 60}ms both;">
-                    <div class="tl-preview">
-                        <div class="tl-preview-date">${escHTML(e.date)}</div>
-                        <div class="tl-preview-title">${escHTML(e.title)}</div>
-                    </div>
-                    <div class="tl-dot"></div>
-                </div>
-            `).join('');
+                timelineTarget.innerHTML = entries.map(e => {
+                    const safeTitle = escHTML(e.title);
+                    const safeDate = escHTML(e.date);
+                    const safeContent = escHTML(e.content);
+                    return `
+                    <div class="timeline-node" data-id="${e.id}">
+                        <div class="timeline-dot" onclick="toggleEntry(this.closest('.timeline-node'))"></div>
+                        <div class="timeline-connector connector-top"></div>
+                        <div class="entry-card" onclick="toggleEntry(this.closest('.timeline-node'))">
+                            <div class="entry-date">${safeDate}</div>
+                            <div class="entry-title">${safeTitle}</div>
+                            <div class="entry-content-wrapper">
+                                <div class="entry-content">${safeContent}</div>
+                                <div class="entry-actions">
+                                    <button class="entry-edit-btn" onclick="event.stopPropagation(); openEdit(${e.id})">Edit</button>
+                                    <button class="entry-delete-btn" onclick="event.stopPropagation(); deleteEntry(${e.id})">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timeline-connector connector-bottom"></div>
+                    </div>`;
+                }).join('');
+
+                // store raw data on nodes for edit access
+                entries.forEach(e => {
+                    const node = timelineTarget.querySelector(`.timeline-node[data-id="${e.id}"]`);
+                    if (node) {
+                        node._data = e;
+                    }
+                });
+
+            } catch (err) {
+                timelineTarget.innerHTML = '<div style="color:#ef4444;font-family:var(--font-ui);text-align:center;padding:2rem">Could not reach database.</div>';
+            }
         }
 
         function escHTML(str) {
@@ -689,126 +496,96 @@
         }
 
         async function addEntry() {
-            const titleEl   = document.getElementById('new-title');
+            const titleEl = document.getElementById('new-title');
             const contentEl = document.getElementById('new-content');
-            const btn       = document.getElementById('record-btn');
             if (!titleEl.value.trim() || !contentEl.value.trim()) return;
 
             const payload = {
-                date:    getFormattedDate(),
-                title:   titleEl.value.trim(),
+                date: getFormattedDate(),
+                title: titleEl.value.trim(),
                 content: contentEl.value.trim()
             };
 
-            btn.textContent = 'Saving…';
-            btn.disabled = true;
+            titleEl.disabled = contentEl.disabled = true;
             try {
                 const res = await fetch('/api/entries', {
-                    method:  'POST',
+                    method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body:    JSON.stringify(payload)
+                    body: JSON.stringify(payload)
                 });
                 if (res.ok) {
                     titleEl.value = contentEl.value = '';
                     toggleComposer();
                     await loadTimeline();
-                    showToast('Entry recorded.');
                 } else {
                     const msg = await res.text();
-                    showToast('Failed to save: ' + msg, true);
+                    alert('Failed to save: ' + msg);
                 }
-            } catch { showToast('Network error.', true); }
-            btn.textContent = 'Record';
-            btn.disabled = false;
+            } catch { alert('Network error.'); }
+            titleEl.disabled = contentEl.disabled = false;
         }
 
-        // ── ENTRY VIEW MODAL ──────────────────────────────
-
-        function openEntryModal(id) {
-            const e = allEntries.find(x => x.id === id);
-            if (!e) return;
-            viewingId = id;
-            document.getElementById('view-date').textContent    = e.date;
-            document.getElementById('view-title').textContent   = e.title;
-            document.getElementById('view-content').textContent = e.content;
-            entryModal.classList.add('open');
-        }
-
-        function closeEntryModal() {
-            entryModal.classList.remove('open');
-            viewingId = null;
-        }
-
-        function openEditFromView() {
-            if (!viewingId) return;
-            closeEntryModal();
-            setTimeout(() => openEditModal(viewingId), 80);
-        }
-
-        async function deleteFromView() {
-            if (!viewingId) return;
-            const id = viewingId;
-            // inline confirm via toast-style
+        async function deleteEntry(id) {
             if (!confirm('Delete this entry?')) return;
             try {
                 const res = await fetch('/api/entries/' + id, { method: 'DELETE' });
-                if (res.ok) {
-                    closeEntryModal();
-                    await loadTimeline();
-                    showToast('Entry deleted.');
-                } else {
-                    showToast('Delete failed.', true);
-                }
-            } catch { showToast('Network error.', true); }
+                if (res.ok) await loadTimeline();
+                else alert('Delete failed.');
+            } catch { alert('Network error.'); }
         }
 
         // ── EDIT MODAL ────────────────────────────────────
 
-        function openEditModal(id) {
-            const e = allEntries.find(x => x.id === id);
-            if (!e) return;
+        function openEdit(id) {
+            const node = timelineTarget.querySelector('.timeline-node[data-id="' + id + '"]');
+            if (!node || !node._data) return;
+            const e = node._data;
             editingId = id;
             document.getElementById('modal-title-display').textContent = e.title;
-            document.getElementById('edit-date').value    = e.date;
+            document.getElementById('edit-date').value = e.date;
             document.getElementById('edit-content').value = e.content;
             editModal.classList.add('open');
         }
 
-        function closeEditModal() {
+        function closeModal() {
             editModal.classList.remove('open');
             editingId = null;
         }
 
         async function saveEdit() {
-            const date    = document.getElementById('edit-date').value.trim();
+            const date = document.getElementById('edit-date').value.trim();
             const content = document.getElementById('edit-content').value.trim();
             if (!date || !content || !editingId) return;
 
             try {
                 const res = await fetch('/api/entries/' + editingId, {
-                    method:  'PUT',
+                    method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body:    JSON.stringify({ date, content })
+                    body: JSON.stringify({ date, content })
                 });
                 if (res.ok) {
-                    closeEditModal();
+                    closeModal();
                     await loadTimeline();
-                    showToast('Entry updated.');
                 } else {
                     const msg = await res.text();
-                    showToast('Save failed: ' + msg, true);
+                    alert('Save failed: ' + msg);
                 }
-            } catch { showToast('Network error.', true); }
+            } catch { alert('Network error.'); }
         }
 
-        // close modals on backdrop click
-        entryModal.addEventListener('click', e => { if (e.target === entryModal) closeEntryModal(); });
-        editModal.addEventListener('click',  e => { if (e.target === editModal)  closeEditModal(); });
+        editModal.addEventListener('click', e => {
+            if (e.target === editModal) closeModal();
+        });
 
         // ── UI ────────────────────────────────────────────
 
         function toggleComposer() {
             composerPanel.classList.toggle('open');
+        }
+
+        function toggleEntry(node) {
+            if (window.getSelection().toString().length) return;
+            node.classList.toggle('active');
         }
 
         function revealJournal() {
@@ -820,24 +597,13 @@
                     journalContainer.style.opacity = '1';
                     journalContainer.style.transform = 'translateY(0)';
                 }, 40);
-            }, 550);
+            }, 500);
         }
 
         // ── BOOT ──────────────────────────────────────────
 
         (function init() {
-            // dot stagger animation keyframe (injected once)
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes dotAppear {
-                    from { opacity: 0; transform: scale(0) translateY(6px); }
-                    to   { opacity: 1; transform: scale(1) translateY(0); }
-                }
-            `;
-            document.head.appendChild(style);
-
             loadTimeline();
-
             if (!PASSWORD_ENABLED) {
                 lockScreen.style.display = 'none';
                 journalContainer.style.display = 'block';
