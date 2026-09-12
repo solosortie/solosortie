@@ -1,627 +1,604 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SoloSortie</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400&family=Quicksand:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #1a1c1e;
-            --text: #e2e8f0;
-            --muted: #718096;
-            --accent: #a78bfa;
-            --card: #202327;
-            --font-ui: 'Quicksand', sans-serif;
-            --font-ink: 'Kalam', cursive;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: var(--font-ui);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>solosortie</title>
+<meta name="description" content="solosortie. product manager at Pacify. builds small things until they work.">
+<meta name="theme-color" content="#E8DDCC">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='14' fill='%2320201E'/%3E%3Ccircle cx='32' cy='32' r='13' fill='%23D8453B' stroke='%23151515' stroke-width='3'/%3E%3Cpath d='M27 29L36 34M32 25L29 39M38 27L26 35' stroke='%238D251F' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #E8DDCC;
+    --ink: #20201E;
+    --ink-soft: #55534B;
+    --line: #c9bea8;
+    --red: #D8453B;
+    --panel: #ded2bc;
+  }
+  html[data-theme="dark"] {
+    --bg: #161615;
+    --ink: #D9D4C6;
+    --ink-soft: #8c887c;
+    --line: #333029;
+    --red: #e05a4f;
+    --panel: #1e1e1c;
+  }
 
-        /* LOCK */
-        #lock-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            transition: opacity 0.5s ease;
-        }
-        #lock-screen h1 {
-            font-size: 1.4rem;
-            font-weight: 300;
-            letter-spacing: 8px;
-            color: var(--muted);
-            margin-bottom: 2.5rem;
-        }
-        #password-input {
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid var(--muted);
-            color: var(--text);
-            font-family: var(--font-ui);
-            font-size: 1.1rem;
-            padding: 0.5rem;
-            text-align: center;
-            outline: none;
-            letter-spacing: 3px;
-            width: 200px;
-            transition: border-color 0.3s;
-        }
-        #password-input:focus { border-color: var(--accent); }
+  * { box-sizing: border-box; }
+  html { color-scheme: light; }
+  html[data-theme="dark"] { color-scheme: dark; }
 
-        /* JOURNAL */
-        #journal-container {
-            display: none;
-            width: 100%;
-            max-width: 680px;
-            padding: 3.5rem 2rem 6rem;
-            opacity: 0;
-            transform: translateY(12px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: 16px;
+    line-height: 1.55;
+    transition: background .25s ease, color .25s ease;
+    -webkit-font-smoothing: antialiased;
+  }
 
-        /* HEADER */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 3rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid rgba(113,128,150,0.15);
-        }
-        header h2 {
-            font-size: 1rem;
-            font-weight: 400;
-            letter-spacing: 5px;
-            color: var(--muted);
-            text-transform: uppercase;
-        }
-        .add-btn {
-            background: transparent;
-            border: 1px solid rgba(113,128,150,0.4);
-            color: var(--muted);
-            font-family: var(--font-ui);
-            font-size: 0.8rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-            padding: 0.4rem 1.2rem;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.25s;
-        }
-        .add-btn:hover { border-color: var(--accent); color: var(--accent); }
+  a { color: var(--ink); text-decoration-color: var(--line); text-underline-offset: 3px; }
+  a:hover { color: var(--red); text-decoration-color: var(--red); }
+  a, .theme-btn, .job .who a {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='4.5' fill='%23D8453B' stroke='%23151515' stroke-width='1.6'/%3E%3C/svg%3E") 10 10, pointer;
+  }
 
-        /* COMPOSER */
-        .composer-wrapper {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.55s cubic-bezier(0.4,0,0.2,1);
-        }
-        .composer-wrapper.open {
-            max-height: 2000px;
-            margin-bottom: 3rem;
-        }
-        .composer {
-            background: var(--card);
-            border-radius: 14px;
-            padding: 1.8rem;
-            border: 1px solid rgba(113,128,150,0.1);
-        }
-        .composer input[type="text"],
-        .composer textarea {
-            width: 100%;
-            background: transparent;
-            border: none;
-            color: var(--text);
-            outline: none;
-            display: block;
-        }
-        .composer input[type="text"] {
-            font-family: var(--font-ui);
-            font-size: 1.3rem;
-            font-weight: 500;
-            border-bottom: 1px solid rgba(113,128,150,0.2);
-            padding-bottom: 0.6rem;
-            margin-bottom: 1.4rem;
-        }
-        .composer textarea {
-            font-family: var(--font-ink);
-            font-size: 1.25rem;
-            resize: vertical;
-            min-height: 130px;
-            line-height: 1.75;
-            margin-bottom: 1.4rem;
-        }
-        .composer-actions { text-align: right; }
-        .record-btn {
-            background: var(--accent);
-            color: var(--bg);
-            border: none;
-            font-family: var(--font-ui);
-            font-size: 0.85rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            padding: 0.5rem 1.6rem;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-        .record-btn:hover { opacity: 0.8; }
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
 
-        /* TIMELINE — centered vertical spine */
-        .timeline {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-        }
-        .timeline-node {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-        }
-        .timeline-dot {
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            background: var(--muted);
-            flex-shrink: 0;
-            cursor: pointer;
-            transition: background 0.3s, box-shadow 0.3s;
-        }
-        .timeline-node.active .timeline-dot,
-        .timeline-node:hover .timeline-dot {
-            background: var(--accent);
-            box-shadow: 0 0 10px var(--accent);
-        }
-        .timeline-connector {
-            width: 1px;
-            background: rgba(113,128,150,0.25);
-            flex-shrink: 0;
-        }
-        .connector-top { height: 16px; }
-        .connector-bottom { height: 28px; }
-        .timeline-node:last-child .connector-bottom { display: none; }
+  /* header */
+  header.site {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  header.site .mark { font-weight: 600; }
+  header.site .mark span { color: var(--red); }
+  .theme-btn {
+    font-family: inherit;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    border-radius: 20px;
+    padding: 6px 12px 6px 10px;
+    cursor: pointer;
+    transition: border-color .2s ease, color .2s ease;
+  }
+  .theme-btn:hover { border-color: var(--red); color: var(--ink); }
+  .theme-btn:hover .dot { background: var(--red); }
+  .theme-btn .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--ink-soft);
+    animation: cursor-blink 1.45s steps(1, end) infinite;
+    flex: none;
+  }
+  .theme-btn .label::before { content: "$ theme "; color: var(--ink-soft); opacity: .7; }
+  @keyframes cursor-blink { 0%, 48% { opacity: 1; } 49%, 100% { opacity: .25; } }
+  @media (prefers-reduced-motion: reduce) { .theme-btn .dot { animation: none; } }
 
-        /* ENTRY CARD */
-        .entry-card {
-            width: 100%;
-            background: var(--card);
-            border: 1px solid rgba(113,128,150,0.1);
-            border-radius: 14px;
-            padding: 1.3rem 1.5rem;
-            cursor: pointer;
-            transition: border-color 0.25s;
-        }
-        .timeline-node:hover .entry-card,
-        .timeline-node.active .entry-card {
-            border-color: rgba(167,139,250,0.25);
-        }
-        .entry-date {
-            font-size: 0.7rem;
-            font-weight: 700;
-            letter-spacing: 2.5px;
-            color: var(--muted);
-            text-transform: uppercase;
-            margin-bottom: 0.25rem;
-        }
-        .entry-title {
-            font-size: 1.2rem;
-            font-weight: 500;
-            color: var(--text);
-            transition: color 0.25s;
-        }
-        .timeline-node:hover .entry-title,
-        .timeline-node.active .entry-title { color: var(--accent); }
+  /* hero */
+  .hero {
+    padding: 56px 0 20px;
+  }
+  .prompt {
+    color: var(--ink-soft);
+    font-size: 13px;
+    margin: 0 0 18px;
+  }
+  .prompt .path { color: var(--red); }
+  h1 {
+    font-size: clamp(28px, 5.5vw, 40px);
+    line-height: 1.25;
+    margin: 0 0 6px;
+    font-weight: 700;
+    letter-spacing: -.5px;
+  }
+  h1 .accent { color: var(--red); }
+  .tagline {
+    color: var(--ink-soft);
+    font-size: 16px;
+    margin: 0 0 26px;
+    max-width: 46ch;
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
 
-        .entry-content-wrapper {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.45s ease-out;
-        }
-        .timeline-node.active .entry-content-wrapper { max-height: 3000px; }
+  .rig {
+    margin: 20px 0 8px;
+    line-height: 0;
+  }
+  .rig svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .rig-caption {
+    color: var(--ink-soft);
+    font-size: 12.5px;
+    margin: 10px 0 0;
+  }
 
-        .entry-content {
-            font-family: var(--font-ink);
-            font-size: 1.2rem;
-            color: #b0b9c1;
-            padding-top: 1.1rem;
-            white-space: pre-line;
-            line-height: 1.85;
-        }
-        .entry-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.6rem;
-            margin-top: 1.2rem;
-            padding-top: 1rem;
-            border-top: 1px solid rgba(113,128,150,0.1);
-        }
-        .entry-edit-btn, .entry-delete-btn {
-            background: transparent;
-            font-family: var(--font-ui);
-            font-size: 0.72rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-            padding: 0.3rem 1rem;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-transform: uppercase;
-        }
-        .entry-edit-btn {
-            border: 1px solid rgba(167,139,250,0.4);
-            color: var(--accent);
-        }
-        .entry-edit-btn:hover { background: rgba(167,139,250,0.1); }
-        .entry-delete-btn {
-            border: 1px solid rgba(239,68,68,0.3);
-            color: #ef4444;
-        }
-        .entry-delete-btn:hover { background: rgba(239,68,68,0.08); }
+  /* sections */
+  section { padding: 46px 0; border-top: 1px solid var(--line); }
+  h2 {
+    font-size: 13px;
+    text-transform: none;
+    color: var(--ink-soft);
+    margin: 0 0 16px;
+    font-weight: 600;
+  }
+  section p { margin: 0 0 14px; max-width: 60ch; }
+  section p:last-child { margin-bottom: 0; }
 
-        /* EDIT MODAL */
-        #edit-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.75);
-            z-index: 100;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-        }
-        #edit-modal.open { display: flex; }
-        .modal-box {
-            background: #22262b;
-            border-radius: 16px;
-            padding: 2rem;
-            width: 100%;
-            max-width: 560px;
-            border: 1px solid rgba(113,128,150,0.15);
-        }
-        .modal-entry-title {
-            font-size: 1.2rem;
-            font-weight: 500;
-            color: var(--accent);
-            margin-bottom: 1.5rem;
-        }
-        .modal-label {
-            font-size: 0.68rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            color: var(--muted);
-            text-transform: uppercase;
-            margin-bottom: 0.4rem;
-        }
-        #edit-date {
-            width: 100%;
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid rgba(113,128,150,0.25);
-            color: var(--text);
-            font-family: var(--font-ui);
-            font-size: 0.95rem;
-            padding: 0.4rem 0;
-            outline: none;
-            margin-bottom: 1.4rem;
-            letter-spacing: 1px;
-        }
-        #edit-content {
-            width: 100%;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(113,128,150,0.15);
-            border-radius: 8px;
-            color: var(--text);
-            font-family: var(--font-ink);
-            font-size: 1.2rem;
-            padding: 0.8rem 1rem;
-            outline: none;
-            resize: vertical;
-            min-height: 160px;
-            line-height: 1.8;
-            margin-bottom: 1.6rem;
-        }
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.7rem;
-        }
-        .modal-cancel-btn {
-            background: transparent;
-            border: 1px solid rgba(113,128,150,0.3);
-            color: var(--muted);
-            font-family: var(--font-ui);
-            font-size: 0.82rem;
-            font-weight: 600;
-            padding: 0.5rem 1.4rem;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .modal-cancel-btn:hover { border-color: var(--muted); color: var(--text); }
-        .modal-save-btn {
-            background: var(--accent);
-            color: var(--bg);
-            border: none;
-            font-family: var(--font-ui);
-            font-size: 0.82rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            padding: 0.5rem 1.6rem;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-        .modal-save-btn:hover { opacity: 0.8; }
+  .job {
+    display: flex;
+    gap: 14px;
+    align-items: baseline;
+    flex-wrap: wrap;
+  }
+  .job .who {
+    font-weight: 700;
+    font-size: 18px;
+  }
+  .job .who a { color: var(--ink); border-bottom: 1px solid var(--line); }
+  .job .who a:hover { color: var(--red); border-color: var(--red); }
+  .job .role { color: var(--ink-soft); font-size: 14px; }
+  .job-desc { margin-top: 12px; max-width: 58ch; }
+  .job-links { margin-top: 14px; font-size: 14px; }
 
-        .empty-state {
-            color: var(--muted);
-            font-family: var(--font-ui);
-            text-align: center;
-            padding: 2rem 0;
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-        }
-    </style>
+  .stack-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+  .stack-list li {
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 4px 9px 4px 8px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .stack-list li.tag::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--tag, var(--red));
+    flex: none;
+  }
+
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 30px 0 50px;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+  footer .links { margin-bottom: 14px; }
+  footer .fine { font-size: 12px; }
+
+  @media (max-width: 560px) {
+    .job { flex-direction: column; gap: 4px; }
+  }
+</style>
 </head>
 <body>
 
-    <div id="lock-screen">
-        <h1>SOLOSORTIE</h1>
-        <input type="password" id="password-input" placeholder="password" autofocus>
+<div class="wrap">
+  <header class="site">
+    <div class="mark">solosortie<span>.</span></div>
+    <button class="theme-btn" id="themeToggle" type="button"><span class="dot"></span><span class="label">dark</span></button>
+  </header>
+
+  <div class="hero">
+    <p class="prompt">[<span class="path">solosortie</span>@web ~]$ whoami</p>
+    <h1>hi, i'm Aryan.<br>i build things <span class="accent">and ship them.</span></h1>
+    <p class="tagline">product manager at Pacify. also the one who breaks the build and fixes it at 2am.</p>
+    <div class="links">
+      <a href="https://github.com/solosortie" target="_blank" rel="noopener">github ↗</a>
+      <a href="https://instagram.com/solosortie" target="_blank" rel="noopener">instagram ↗</a>
+      <a href="#work">work ↓</a>
+      <a href="mailto:aryan91129@gmail.com">email ↗</a>
     </div>
 
-    <div id="journal-container">
-        <header>
-            <h2>Log</h2>
-            <button class="add-btn" onclick="toggleComposer()">+ Add Entry</button>
-        </header>
+    <div class="rig" id="rigHolder"></div>
+    <p class="rig-caption">thinkiee. the ThinkPad this site was written on. arch linux, no distractions.</p>
+  </div>
 
-        <div class="composer-wrapper" id="composer-panel">
-            <div class="composer">
-                <input type="text" id="new-title" placeholder="Title" autocomplete="off">
-                <textarea id="new-content" placeholder="Write here champ."></textarea>
-                <div class="composer-actions">
-                    <button class="record-btn" onclick="addEntry()">Record</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="timeline" id="timeline-target"></div>
+  <section id="work">
+    <h2>currently</h2>
+    <div class="job">
+      <span class="who"><a href="https://pacify.site" target="_blank" rel="noopener">Pacify</a></span>
+      <span class="role">product manager</span>
     </div>
-
-    <div id="edit-modal">
-        <div class="modal-box">
-            <div class="modal-entry-title" id="modal-title-display"></div>
-            <div class="modal-label">Date</div>
-            <input type="text" id="edit-date" autocomplete="off">
-            <div class="modal-label">Entry</div>
-            <textarea id="edit-content"></textarea>
-            <div class="modal-actions">
-                <button class="modal-cancel-btn" onclick="closeModal()">Cancel</button>
-                <button class="modal-save-btn" onclick="saveEdit()">Save</button>
-            </div>
-        </div>
+    <p class="job-desc">a bootstrapped venture. the corner of the internet where things I make actually get organized. still small, still mine.</p>
+    <div class="job-links">
+      <a href="https://pacify.site" target="_blank" rel="noopener">pacify.site ↗</a>
     </div>
+  </section>
 
-    <script>
-        const PASSWORD_ENABLED = true;
-        const JOURNAL_PASSWORD = "8282";
+  <section>
+    <h2>things i've shipped</h2>
+    <p><strong>June.</strong> a local music player that doesn't phone home. mpv does the playing, SQLite remembers.</p>
+    <p><a href="https://github.com/solosortie" target="_blank" rel="noopener">the rest is on github ↗</a>. some finished, some in development, all instructive.</p>
+  </section>
 
-        const lockScreen = document.getElementById('lock-screen');
-        const passwordInput = document.getElementById('password-input');
-        const journalContainer = document.getElementById('journal-container');
-        const timelineTarget = document.getElementById('timeline-target');
-        const composerPanel = document.getElementById('composer-panel');
-        const editModal = document.getElementById('edit-modal');
+  <section>
+    <h2>the stack</h2>
+    <ul class="stack-list">
+      <li class="tag" style="--tag: #1793D1;">Arch Linux</li>
+      <li class="tag" style="--tag: #FFD43B;">Python</li>
+      <li class="tag" style="--tag: #478CBF;">Godot</li>
+    </ul>
+  </section>
 
-        let editingId = null;
+  <footer>
+    <div class="links">
+      <a href="https://github.com/solosortie" target="_blank" rel="noopener">github ↗</a>
+      <a href="https://instagram.com/solosortie" target="_blank" rel="noopener">instagram ↗</a>
+      <a href="mailto:aryan91129@gmail.com">email ↗</a>
+    </div>
+    <p class="fine">© 2026 solosortie. no frameworks were harmed. built with HTML, CSS, and a red TrackPoint.</p>
+  </footer>
+</div>
 
-        // ── DATA ──────────────────────────────────────────
+<script>
+  const root = document.documentElement;
+  const btn = document.getElementById('themeToggle');
+  const rigHolder = document.getElementById('rigHolder');
 
-        async function loadTimeline() {
-            try {
-                const res = await fetch('/api/entries');
-                if (!res.ok) throw new Error('bad response');
-                const entries = await res.json();
+  const svgLight = `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="440" viewBox="75 55 640 440" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">Thinkiee — ThinkPad L490</title>
+  <desc id="desc">A transparent, flat two-dimensional illustration of an open black ThinkPad L490, with balanced proportions, a red TrackPoint, centered touchpad, Arch Linux fastfetch output, and the name Thinkiee on the palm rest.</desc>
 
-                if (!entries.length) {
-                    timelineTarget.innerHTML = '<div class="empty-state">No entries yet. The page is blank.</div>';
-                    return;
-                }
+  <defs>
+    <linearGradient id="screenGlow" x1="290" y1="128" x2="500" y2="333" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#263234"/>
+      <stop offset="1" stop-color="#161D1F"/>
+    </linearGradient>
 
-                timelineTarget.innerHTML = entries.map(e => {
-                    const safeTitle = escHTML(e.title);
-                    const safeDate = escHTML(e.date);
-                    const safeContent = escHTML(e.content);
-                    return `
-                    <div class="timeline-node" data-id="${e.id}">
-                        <div class="timeline-dot" onclick="toggleEntry(this.closest('.timeline-node'))"></div>
-                        <div class="timeline-connector connector-top"></div>
-                        <div class="entry-card" onclick="toggleEntry(this.closest('.timeline-node'))">
-                            <div class="entry-date">${safeDate}</div>
-                            <div class="entry-title">${safeTitle}</div>
-                            <div class="entry-content-wrapper">
-                                <div class="entry-content">${safeContent}</div>
-                                <div class="entry-actions">
-                                    <button class="entry-edit-btn" onclick="event.stopPropagation(); openEdit(${e.id})">Edit</button>
-                                    <button class="entry-delete-btn" onclick="event.stopPropagation(); deleteEntry(${e.id})">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="timeline-connector connector-bottom"></div>
-                    </div>`;
-                }).join('');
+    <linearGradient id="deck" x1="180" y1="353" x2="594" y2="486" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#353535"/>
+      <stop offset="1" stop-color="#202020"/>
+    </linearGradient>
 
-                // store raw data on nodes for edit access
-                entries.forEach(e => {
-                    const node = timelineTarget.querySelector(`.timeline-node[data-id="${e.id}"]`);
-                    if (node) {
-                        node._data = e;
-                    }
-                });
+    <clipPath id="screenClip">
+      <path d="M221 113L548 100L565 337L206 343L221 113Z"/>
+    </clipPath>
 
-            } catch (err) {
-                timelineTarget.innerHTML = '<div style="color:#ef4444;font-family:var(--font-ui);text-align:center;padding:2rem">Could not reach database.</div>';
-            }
-        }
+    <style>
+      .ink { stroke: #20201e; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+      .fine { stroke: #20201e; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+      .key { fill: #454545; stroke: #171716; stroke-width: 1.6; }
+      .keycap { fill: #bdb9ad; font: 700 6px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; }
+      .terminal { fill: #c8d9c6; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      .fetch { font-size: 5.15px; font-weight: 500; }
+      .fetch-label { fill: #79A7D3; font-weight: 700; }
+      .arch { fill: #66A6D9; font-size: 5.3px; font-weight: 700; }
+      .cursor { animation: cursor-blink 1.45s steps(1, end) infinite; }
+      @keyframes cursor-blink { 0%, 48% { opacity: .85; } 49%, 100% { opacity: .12; } }
+      @media (prefers-reduced-motion: reduce) { .cursor { animation: none; } }
+    </style>
+  </defs>
 
-        function escHTML(str) {
-            return String(str)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;');
-        }
+  <!-- display lid -->
+  <path d="M198 88L568 75C584 75 592 85 594 102L611 349L173 355L186 106C187 96 190 91 198 88Z" fill="#292929" class="ink"/>
+  <path d="M221 113L548 100L565 337L206 343L221 113Z" fill="url(#screenGlow)" stroke="#111110" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M385 89C390 89 394 92 394 96C394 100 391 102 386 102C382 102 378 99 378 95C378 92 381 89 385 89Z" fill="#0E0E0E"/>
+  <circle cx="386" cy="95" r="2.2" fill="#67787A"/>
+  <circle cx="568" cy="92" r="2.4" fill="#80A069"/>
 
-        function getFormattedDate() {
-            return new Date().toLocaleDateString('en-US', {
-                year: 'numeric', month: 'long', day: 'numeric'
-            }).toUpperCase();
-        }
+  <!-- screen content -->
+  <g clip-path="url(#screenClip)">
+    <path d="M228 124L554 113L555 140L226 148L228 124Z" fill="#111819" opacity=".9"/>
+    <circle cx="241" cy="135" r="3.5" fill="#D9604C"/>
+    <circle cx="253" cy="135" r="3.5" fill="#D5AF58"/>
+    <circle cx="265" cy="134" r="3.5" fill="#719469"/>
+    <text x="283" y="137" class="terminal" font-size="8" font-weight="600" fill="#879897">solosortie@thinkiee: ~</text>
 
-        async function addEntry() {
-            const titleEl = document.getElementById('new-title');
-            const contentEl = document.getElementById('new-content');
-            if (!titleEl.value.trim() || !contentEl.value.trim()) return;
+    <!-- the user's real fastfetch output, fitted to the L490 display -->
+    <g transform="rotate(-1.05 384 227) translate(66 38) scale(.82 .78)" class="terminal fetch">
+      <text x="236" y="158" fill="#D5AF58">[solosortie@thinkiee ~]$ fastfetch</text>
 
-            const payload = {
-                date: getFormattedDate(),
-                title: titleEl.value.trim(),
-                content: contentEl.value.trim()
-            };
+      <text x="237" y="174" class="arch">
+        <tspan x="237" dy="0">                 -\`</tspan>
+        <tspan x="237" dy="7">                .o+\`</tspan>
+        <tspan x="237" dy="7">               \`ooo/</tspan>
+        <tspan x="237" dy="7">              \`+oooo:</tspan>
+        <tspan x="237" dy="7">             \`+oooooo:</tspan>
+        <tspan x="237" dy="7">             -+oooooo+:</tspan>
+        <tspan x="237" dy="7">           \`/:-:++oooo+:</tspan>
+        <tspan x="237" dy="7">          \`/++++/+++++++:</tspan>
+        <tspan x="237" dy="7">         \`/++++++++++++++:</tspan>
+        <tspan x="237" dy="7">        \`/+++ooooooooooooo/\`</tspan>
+        <tspan x="237" dy="7">       ./ooosssso++osssssso+\`</tspan>
+        <tspan x="237" dy="7">      .oossssso-\`\`\`\`/ossssss+\`</tspan>
+        <tspan x="237" dy="7">     -osssssso.      :ssssssso.</tspan>
+        <tspan x="237" dy="7">    :osssssss/        osssso+++.</tspan>
+        <tspan x="237" dy="7">   /ossssssss/        +ssssooo/-</tspan>
+        <tspan x="237" dy="7"> \`/ossssso+/:-        -:/+osssso+-</tspan>
+        <tspan x="237" dy="7">\`+sso+:-\`                \`.-/+oso:</tspan>
+        <tspan x="237" dy="7">\`++:.                       \`-/+/</tspan>
+        <tspan x="237" dy="7">.\`                              \`/</tspan>
+      </text>
 
-            titleEl.disabled = contentEl.disabled = true;
-            try {
-                const res = await fetch('/api/entries', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                if (res.ok) {
-                    titleEl.value = contentEl.value = '';
-                    toggleComposer();
-                    await loadTimeline();
-                } else {
-                    const msg = await res.text();
-                    alert('Failed to save: ' + msg);
-                }
-            } catch { alert('Network error.'); }
-            titleEl.disabled = contentEl.disabled = false;
-        }
+      <text x="363" y="174" fill="#C8D9C6">
+        <tspan x="363" dy="0" fill="#79A7D3" font-weight="700">solosortie@thinkiee</tspan>
+        <tspan x="363" dy="7">-------------------</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">OS</tspan>: Arch Linux x86_64</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Host</tspan>: ThinkPad L490</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Kernel</tspan>: Linux 7.1.3-arch1-1</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Uptime</tspan>: 23 hours, 29 mins</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Packages</tspan>: 19 (flatpak), 1343 (pacman)</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Shell</tspan>: bash 5.3.15</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Display (BOE0791)</tspan>: 1920x1080 @ 1.2x</tspan>
+        <tspan x="363" dy="7">in 14&quot;, 60 Hz [Built-in]</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">DE</tspan>: KDE Plasma 6.7.2</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">WM</tspan>: KWin (Wayland)</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">WM Theme</tspan>: Breeze</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Theme</tspan>: Breeze (Dark) [Qt], Breeze-Dark</tspan>
+        <tspan x="363" dy="7">[GTK2], Breeze [GTK3]</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Icons</tspan>: breeze-dark [Qt], breeze-dark [GTK2/3/4]</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Font</tspan>: Noto Sans (10pt) [Qt], Noto Sans (10pt) [GTK2/3/4]</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Cursor</tspan>: breeze (24px)</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Terminal</tspan>: konsole 26.4.3</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">CPU</tspan>: Intel(R) Core(TM) i5-8365U (8) @ 4.10 GHz</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">GPU</tspan>: Intel UHD Graphics 620 @ 1.10 GHz [Integrated]</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Memory</tspan>: 5.66 GiB / 7.40 GiB (77%)</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Swap</tspan>: 3.43 GiB / 4.00 GiB (86%)</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Disk (/)</tspan>: 156.28 GiB / 232.69 GiB (67%) - ext4</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Locale</tspan>: en_US.UTF-8</tspan>
+      </text>
 
-        async function deleteEntry(id) {
-            if (!confirm('Delete this entry?')) return;
-            try {
-                const res = await fetch('/api/entries/' + id, { method: 'DELETE' });
-                if (res.ok) await loadTimeline();
-                else alert('Delete failed.');
-            } catch { alert('Network error.'); }
-        }
+      <text x="236" y="322" fill="#D5AF58">[solosortie@thinkiee ~]$</text>
+      <rect class="cursor" x="318" y="317" width="4" height="6" rx=".5" fill="#C8D9C6" opacity=".85"/>
+    </g>
+  </g>
 
-        // ── EDIT MODAL ────────────────────────────────────
+  <!-- hinges -->
+  <path d="M193 345L271 343L270 364L188 366Z" fill="#141414" class="fine"/>
+  <path d="M505 341L582 340L590 359L510 361Z" fill="#141414" class="fine"/>
+  <path d="M201 351L262 349" stroke="#696969" stroke-width="3" stroke-linecap="round"/>
+  <path d="M518 348L575 347" stroke="#696969" stroke-width="3" stroke-linecap="round"/>
 
-        function openEdit(id) {
-            const node = timelineTarget.querySelector('.timeline-node[data-id="' + id + '"]');
-            if (!node || !node._data) return;
-            const e = node._data;
-            editingId = id;
-            document.getElementById('modal-title-display').textContent = e.title;
-            document.getElementById('edit-date').value = e.date;
-            document.getElementById('edit-content').value = e.content;
-            editModal.classList.add('open');
-        }
+  <!-- lower chassis -->
+  <path d="M174 355L610 349L680 438L652 456C643 462 632 464 620 464L181 468C165 467 150 462 138 456L107 442L174 355Z" fill="url(#deck)" class="ink"/>
+  <path d="M108 442C234 458 550 457 680 438L652 456C643 462 632 464 620 464L181 468C165 467 150 462 138 456L108 442Z" fill="#1A1A1A" stroke="#20201E" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M139 453C252 463 548 462 651 452" stroke="#686868" stroke-width="2" stroke-linecap="round" opacity=".72"/>
 
-        function closeModal() {
-            editModal.classList.remove('open');
-            editingId = null;
-        }
+  <!-- keyboard bed -->
+  <path d="M201 363L568 359L604 420L170 426L201 363Z" fill="#171717" stroke="#111110" stroke-width="3" stroke-linejoin="round"/>
 
-        async function saveEdit() {
-            const date = document.getElementById('edit-date').value.trim();
-            const content = document.getElementById('edit-content').value.trim();
-            if (!date || !content || !editingId) return;
+  <!-- L490 power button -->
+  <circle cx="574" cy="365" r="5.2" fill="#222" stroke="#101010" stroke-width="1.6"/>
+  <path d="M574 362V365M572 363.5C569.5 367 572 369.5 574.5 369.5C577 369.5 579 366.5 576.5 363.5" stroke="#8A8A86" stroke-width="1" stroke-linecap="round" fill="none"/>
 
-            try {
-                const res = await fetch('/api/entries/' + editingId, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ date, content })
-                });
-                if (res.ok) {
-                    closeModal();
-                    await loadTimeline();
-                } else {
-                    const msg = await res.text();
-                    alert('Save failed: ' + msg);
-                }
-            } catch { alert('Network error.'); }
-        }
+  <!-- keyboard, row 1 -->
+  <g transform="matrix(1 -.02 .36 .55 202 369)">
+    <rect class="key" x="0" y="0" width="19" height="17" rx="3"/><rect class="key" x="23" y="0" width="19" height="17" rx="3"/><rect class="key" x="46" y="0" width="19" height="17" rx="3"/><rect class="key" x="69" y="0" width="19" height="17" rx="3"/><rect class="key" x="92" y="0" width="19" height="17" rx="3"/><rect class="key" x="115" y="0" width="19" height="17" rx="3"/><rect class="key" x="138" y="0" width="19" height="17" rx="3"/><rect class="key" x="161" y="0" width="19" height="17" rx="3"/><rect class="key" x="184" y="0" width="19" height="17" rx="3"/><rect class="key" x="207" y="0" width="19" height="17" rx="3"/><rect class="key" x="230" y="0" width="19" height="17" rx="3"/><rect class="key" x="253" y="0" width="19" height="17" rx="3"/><rect class="key" x="276" y="0" width="28" height="17" rx="3"/>
+    <rect class="key" x="0" y="22" width="29" height="18" rx="3"/><rect class="key" x="33" y="22" width="19" height="18" rx="3"/><rect class="key" x="56" y="22" width="19" height="18" rx="3"/><rect class="key" x="79" y="22" width="19" height="18" rx="3"/><rect class="key" x="102" y="22" width="19" height="18" rx="3"/><rect class="key" x="125" y="22" width="19" height="18" rx="3"/><rect class="key" x="148" y="22" width="19" height="18" rx="3"/><rect class="key" x="171" y="22" width="19" height="18" rx="3"/><rect class="key" x="194" y="22" width="19" height="18" rx="3"/><rect class="key" x="217" y="22" width="19" height="18" rx="3"/><rect class="key" x="240" y="22" width="19" height="18" rx="3"/><rect class="key" x="263" y="22" width="41" height="18" rx="3"/>
+    <rect class="key" x="0" y="45" width="36" height="18" rx="3"/><rect class="key" x="40" y="45" width="19" height="18" rx="3"/><rect class="key" x="63" y="45" width="19" height="18" rx="3"/><rect class="key" x="86" y="45" width="19" height="18" rx="3"/><rect class="key" x="109" y="45" width="19" height="18" rx="3"/><rect class="key" x="132" y="45" width="19" height="18" rx="3"/><rect class="key" x="155" y="45" width="19" height="18" rx="3"/><rect class="key" x="178" y="45" width="19" height="18" rx="3"/><rect class="key" x="201" y="45" width="19" height="18" rx="3"/><rect class="key" x="224" y="45" width="19" height="18" rx="3"/><rect class="key" x="247" y="45" width="57" height="18" rx="3"/>
+    <rect class="key" x="0" y="68" width="46" height="18" rx="3"/><rect class="key" x="50" y="68" width="19" height="18" rx="3"/><rect class="key" x="73" y="68" width="19" height="18" rx="3"/><rect class="key" x="96" y="68" width="19" height="18" rx="3"/><rect class="key" x="119" y="68" width="19" height="18" rx="3"/><rect class="key" x="142" y="68" width="19" height="18" rx="3"/><rect class="key" x="165" y="68" width="19" height="18" rx="3"/><rect class="key" x="188" y="68" width="19" height="18" rx="3"/><rect class="key" x="211" y="68" width="19" height="18" rx="3"/><rect class="key" x="234" y="68" width="70" height="18" rx="3"/>
+  </g>
 
-        editModal.addEventListener('click', e => {
-            if (e.target === editModal) closeModal();
-        });
+  <!-- the unmistakable red TrackPoint -->
+  <circle cx="389" cy="398" r="7" fill="#D8453B" stroke="#151515" stroke-width="2.5"/>
+  <path d="M385 396L392 400M389 394L387 402M393 395L385 400" stroke="#8D251F" stroke-width="1" stroke-linecap="round"/>
 
-        // ── UI ────────────────────────────────────────────
+  <!-- physical TrackPoint buttons -->
+  <path d="M329 426L372 426L376 436L328 436Z" fill="#3E3E3E" class="fine"/>
+  <path d="M376 426L418 426L420 436L377 436Z" fill="#3E3E3E" class="fine"/>
+  <path d="M422 426L465 425L469 435L423 436Z" fill="#3E3E3E" class="fine"/>
+  <path d="M382 429L414 429" stroke="#D8453B" stroke-width="1.8" stroke-linecap="round"/>
 
-        function toggleComposer() {
-            composerPanel.classList.toggle('open');
-        }
+  <!-- touchpad -->
+  <path d="M340 438L456 437L466 458L329 459L340 438Z" fill="#292929" stroke="#101010" stroke-width="2.3" stroke-linejoin="round"/>
+  <path d="M344 441L452 440" stroke="#484848" stroke-width="1" stroke-linecap="round" opacity=".7"/>
 
-        function toggleEntry(node) {
-            if (window.getSelection().toString().length) return;
-            node.classList.toggle('active');
-        }
+  <!-- Thinkiee wordmark, seated naturally on the right palm rest -->
+  <g transform="rotate(-3 582 445)">
+    <text x="548" y="449" fill="#A9A9A4" font-family="Arial Narrow, Helvetica Neue, Arial, sans-serif" font-size="13.5" font-weight="800" letter-spacing="-.65">Thinkiee</text>
+    <circle cx="565.2" cy="438.1" r="2" fill="#D8453B"/>
+  </g>
 
-        function revealJournal() {
-            lockScreen.style.opacity = '0';
-            setTimeout(() => {
-                lockScreen.style.display = 'none';
-                journalContainer.style.display = 'block';
-                setTimeout(() => {
-                    journalContainer.style.opacity = '1';
-                    journalContainer.style.transform = 'translateY(0)';
-                }, 40);
-            }, 500);
-        }
+</svg>`;
+  const svgDark = `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="440" viewBox="75 55 640 440" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">Thinkiee — ThinkPad L490</title>
+  <desc id="desc">A transparent, flat two-dimensional illustration of an open black ThinkPad L490, with balanced proportions, a red TrackPoint, centered touchpad, Arch Linux fastfetch output, and the name Thinkiee on the palm rest.</desc>
 
-        // ── BOOT ──────────────────────────────────────────
+  <defs>
+    <linearGradient id="screenGlow" x1="290" y1="128" x2="500" y2="333" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#263234"/>
+      <stop offset="1" stop-color="#161D1F"/>
+    </linearGradient>
 
-        (function init() {
-            loadTimeline();
-            if (!PASSWORD_ENABLED) {
-                lockScreen.style.display = 'none';
-                journalContainer.style.display = 'block';
-                journalContainer.style.opacity = '1';
-                journalContainer.style.transform = 'translateY(0)';
-            } else {
-                passwordInput.addEventListener('keypress', e => {
-                    if (e.key !== 'Enter') return;
-                    if (passwordInput.value === JOURNAL_PASSWORD) {
-                        revealJournal();
-                    } else {
-                        passwordInput.value = '';
-                        passwordInput.style.borderColor = '#ef4444';
-                        setTimeout(() => passwordInput.style.borderColor = 'var(--muted)', 500);
-                    }
-                });
-            }
-        })();
-    </script>
+    <linearGradient id="deck" x1="180" y1="353" x2="594" y2="486" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#353535"/>
+      <stop offset="1" stop-color="#202020"/>
+    </linearGradient>
+
+    <clipPath id="screenClip">
+      <path d="M221 113L548 100L565 337L206 343L221 113Z"/>
+    </clipPath>
+
+    <style>
+      .ink { stroke: #777772; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+      .fine { stroke: #5f5f5b; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+      .key { fill: #454545; stroke: #171716; stroke-width: 1.6; }
+      .keycap { fill: #bdb9ad; font: 700 6px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; }
+      .terminal { fill: #c8d9c6; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      .fetch { font-size: 5.15px; font-weight: 500; }
+      .fetch-label { fill: #79A7D3; font-weight: 700; }
+      .arch { fill: #66A6D9; font-size: 5.3px; font-weight: 700; }
+      .cursor { animation: cursor-blink 1.45s steps(1, end) infinite; }
+      @keyframes cursor-blink { 0%, 48% { opacity: .85; } 49%, 100% { opacity: .12; } }
+      @media (prefers-reduced-motion: reduce) { .cursor { animation: none; } }
+    </style>
+  </defs>
+
+  <!-- display lid -->
+  <path d="M198 88L568 75C584 75 592 85 594 102L611 349L173 355L186 106C187 96 190 91 198 88Z" fill="#292929" class="ink"/>
+  <path d="M221 113L548 100L565 337L206 343L221 113Z" fill="url(#screenGlow)" stroke="#111110" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M385 89C390 89 394 92 394 96C394 100 391 102 386 102C382 102 378 99 378 95C378 92 381 89 385 89Z" fill="#0E0E0E"/>
+  <circle cx="386" cy="95" r="2.2" fill="#67787A"/>
+  <circle cx="568" cy="92" r="2.4" fill="#80A069"/>
+
+  <!-- screen content -->
+  <g clip-path="url(#screenClip)">
+    <path d="M228 124L554 113L555 140L226 148L228 124Z" fill="#111819" opacity=".9"/>
+    <circle cx="241" cy="135" r="3.5" fill="#D9604C"/>
+    <circle cx="253" cy="135" r="3.5" fill="#D5AF58"/>
+    <circle cx="265" cy="134" r="3.5" fill="#719469"/>
+    <text x="283" y="137" class="terminal" font-size="8" font-weight="600" fill="#879897">solosortie@thinkiee: ~</text>
+
+    <!-- the user's real fastfetch output, fitted to the L490 display -->
+    <g transform="rotate(-1.05 384 227) translate(66 38) scale(.82 .78)" class="terminal fetch">
+      <text x="236" y="158" fill="#D5AF58">[solosortie@thinkiee ~]$ fastfetch</text>
+
+      <text x="237" y="174" class="arch">
+        <tspan x="237" dy="0">                 -\`</tspan>
+        <tspan x="237" dy="7">                .o+\`</tspan>
+        <tspan x="237" dy="7">               \`ooo/</tspan>
+        <tspan x="237" dy="7">              \`+oooo:</tspan>
+        <tspan x="237" dy="7">             \`+oooooo:</tspan>
+        <tspan x="237" dy="7">             -+oooooo+:</tspan>
+        <tspan x="237" dy="7">           \`/:-:++oooo+:</tspan>
+        <tspan x="237" dy="7">          \`/++++/+++++++:</tspan>
+        <tspan x="237" dy="7">         \`/++++++++++++++:</tspan>
+        <tspan x="237" dy="7">        \`/+++ooooooooooooo/\`</tspan>
+        <tspan x="237" dy="7">       ./ooosssso++osssssso+\`</tspan>
+        <tspan x="237" dy="7">      .oossssso-\`\`\`\`/ossssss+\`</tspan>
+        <tspan x="237" dy="7">     -osssssso.      :ssssssso.</tspan>
+        <tspan x="237" dy="7">    :osssssss/        osssso+++.</tspan>
+        <tspan x="237" dy="7">   /ossssssss/        +ssssooo/-</tspan>
+        <tspan x="237" dy="7"> \`/ossssso+/:-        -:/+osssso+-</tspan>
+        <tspan x="237" dy="7">\`+sso+:-\`                \`.-/+oso:</tspan>
+        <tspan x="237" dy="7">\`++:.                       \`-/+/</tspan>
+        <tspan x="237" dy="7">.\`                              \`/</tspan>
+      </text>
+
+      <text x="363" y="174" fill="#C8D9C6">
+        <tspan x="363" dy="0" fill="#79A7D3" font-weight="700">solosortie@thinkiee</tspan>
+        <tspan x="363" dy="7">-------------------</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">OS</tspan>: Arch Linux x86_64</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Host</tspan>: ThinkPad L490</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Kernel</tspan>: Linux 7.1.3-arch1-1</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Uptime</tspan>: 23 hours, 29 mins</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Packages</tspan>: 19 (flatpak), 1343 (pacman)</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Shell</tspan>: bash 5.3.15</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Display (BOE0791)</tspan>: 1920x1080 @ 1.2x</tspan>
+        <tspan x="363" dy="7">in 14&quot;, 60 Hz [Built-in]</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">DE</tspan>: KDE Plasma 6.7.2</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">WM</tspan>: KWin (Wayland)</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">WM Theme</tspan>: Breeze</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Theme</tspan>: Breeze (Dark) [Qt], Breeze-Dark</tspan>
+        <tspan x="363" dy="7">[GTK2], Breeze [GTK3]</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Icons</tspan>: breeze-dark [Qt], breeze-dark [GTK2/3/4]</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Font</tspan>: Noto Sans (10pt) [Qt], Noto Sans (10pt) [GTK2/3/4]</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Cursor</tspan>: breeze (24px)</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Terminal</tspan>: konsole 26.4.3</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">CPU</tspan>: Intel(R) Core(TM) i5-8365U (8) @ 4.10 GHz</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">GPU</tspan>: Intel UHD Graphics 620 @ 1.10 GHz [Integrated]</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Memory</tspan>: 5.66 GiB / 7.40 GiB (77%)</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Swap</tspan>: 3.43 GiB / 4.00 GiB (86%)</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Disk (/)</tspan>: 156.28 GiB / 232.69 GiB (67%) - ext4</tspan>
+        <tspan x="363" dy="7"><tspan class="fetch-label">Locale</tspan>: en_US.UTF-8</tspan>
+      </text>
+
+      <text x="236" y="322" fill="#D5AF58">[solosortie@thinkiee ~]$</text>
+      <rect class="cursor" x="318" y="317" width="4" height="6" rx=".5" fill="#C8D9C6" opacity=".85"/>
+    </g>
+  </g>
+
+  <!-- hinges -->
+  <path d="M193 345L271 343L270 364L188 366Z" fill="#141414" class="fine"/>
+  <path d="M505 341L582 340L590 359L510 361Z" fill="#141414" class="fine"/>
+  <path d="M201 351L262 349" stroke="#696969" stroke-width="3" stroke-linecap="round"/>
+  <path d="M518 348L575 347" stroke="#696969" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- lower chassis -->
+  <path d="M174 355L610 349L680 438L652 456C643 462 632 464 620 464L181 468C165 467 150 462 138 456L107 442L174 355Z" fill="url(#deck)" class="ink"/>
+  <path d="M108 442C234 458 550 457 680 438L652 456C643 462 632 464 620 464L181 468C165 467 150 462 138 456L108 442Z" fill="#1A1A1A" stroke="#20201E" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M139 453C252 463 548 462 651 452" stroke="#686868" stroke-width="2" stroke-linecap="round" opacity=".72"/>
+
+  <!-- keyboard bed -->
+  <path d="M201 363L568 359L604 420L170 426L201 363Z" fill="#171717" stroke="#111110" stroke-width="3" stroke-linejoin="round"/>
+
+  <!-- L490 power button -->
+  <circle cx="574" cy="365" r="5.2" fill="#222" stroke="#101010" stroke-width="1.6"/>
+  <path d="M574 362V365M572 363.5C569.5 367 572 369.5 574.5 369.5C577 369.5 579 366.5 576.5 363.5" stroke="#8A8A86" stroke-width="1" stroke-linecap="round" fill="none"/>
+
+  <!-- keyboard, row 1 -->
+  <g transform="matrix(1 -.02 .36 .55 202 369)">
+    <rect class="key" x="0" y="0" width="19" height="17" rx="3"/><rect class="key" x="23" y="0" width="19" height="17" rx="3"/><rect class="key" x="46" y="0" width="19" height="17" rx="3"/><rect class="key" x="69" y="0" width="19" height="17" rx="3"/><rect class="key" x="92" y="0" width="19" height="17" rx="3"/><rect class="key" x="115" y="0" width="19" height="17" rx="3"/><rect class="key" x="138" y="0" width="19" height="17" rx="3"/><rect class="key" x="161" y="0" width="19" height="17" rx="3"/><rect class="key" x="184" y="0" width="19" height="17" rx="3"/><rect class="key" x="207" y="0" width="19" height="17" rx="3"/><rect class="key" x="230" y="0" width="19" height="17" rx="3"/><rect class="key" x="253" y="0" width="19" height="17" rx="3"/><rect class="key" x="276" y="0" width="28" height="17" rx="3"/>
+    <rect class="key" x="0" y="22" width="29" height="18" rx="3"/><rect class="key" x="33" y="22" width="19" height="18" rx="3"/><rect class="key" x="56" y="22" width="19" height="18" rx="3"/><rect class="key" x="79" y="22" width="19" height="18" rx="3"/><rect class="key" x="102" y="22" width="19" height="18" rx="3"/><rect class="key" x="125" y="22" width="19" height="18" rx="3"/><rect class="key" x="148" y="22" width="19" height="18" rx="3"/><rect class="key" x="171" y="22" width="19" height="18" rx="3"/><rect class="key" x="194" y="22" width="19" height="18" rx="3"/><rect class="key" x="217" y="22" width="19" height="18" rx="3"/><rect class="key" x="240" y="22" width="19" height="18" rx="3"/><rect class="key" x="263" y="22" width="41" height="18" rx="3"/>
+    <rect class="key" x="0" y="45" width="36" height="18" rx="3"/><rect class="key" x="40" y="45" width="19" height="18" rx="3"/><rect class="key" x="63" y="45" width="19" height="18" rx="3"/><rect class="key" x="86" y="45" width="19" height="18" rx="3"/><rect class="key" x="109" y="45" width="19" height="18" rx="3"/><rect class="key" x="132" y="45" width="19" height="18" rx="3"/><rect class="key" x="155" y="45" width="19" height="18" rx="3"/><rect class="key" x="178" y="45" width="19" height="18" rx="3"/><rect class="key" x="201" y="45" width="19" height="18" rx="3"/><rect class="key" x="224" y="45" width="19" height="18" rx="3"/><rect class="key" x="247" y="45" width="57" height="18" rx="3"/>
+    <rect class="key" x="0" y="68" width="46" height="18" rx="3"/><rect class="key" x="50" y="68" width="19" height="18" rx="3"/><rect class="key" x="73" y="68" width="19" height="18" rx="3"/><rect class="key" x="96" y="68" width="19" height="18" rx="3"/><rect class="key" x="119" y="68" width="19" height="18" rx="3"/><rect class="key" x="142" y="68" width="19" height="18" rx="3"/><rect class="key" x="165" y="68" width="19" height="18" rx="3"/><rect class="key" x="188" y="68" width="19" height="18" rx="3"/><rect class="key" x="211" y="68" width="19" height="18" rx="3"/><rect class="key" x="234" y="68" width="70" height="18" rx="3"/>
+  </g>
+
+  <!-- the unmistakable red TrackPoint -->
+  <circle cx="389" cy="398" r="7" fill="#D8453B" stroke="#151515" stroke-width="2.5"/>
+  <path d="M385 396L392 400M389 394L387 402M393 395L385 400" stroke="#8D251F" stroke-width="1" stroke-linecap="round"/>
+
+  <!-- physical TrackPoint buttons -->
+  <path d="M329 426L372 426L376 436L328 436Z" fill="#3E3E3E" class="fine"/>
+  <path d="M376 426L418 426L420 436L377 436Z" fill="#3E3E3E" class="fine"/>
+  <path d="M422 426L465 425L469 435L423 436Z" fill="#3E3E3E" class="fine"/>
+  <path d="M382 429L414 429" stroke="#D8453B" stroke-width="1.8" stroke-linecap="round"/>
+
+  <!-- touchpad -->
+  <path d="M340 438L456 437L466 458L329 459L340 438Z" fill="#292929" stroke="#101010" stroke-width="2.3" stroke-linejoin="round"/>
+  <path d="M344 441L452 440" stroke="#484848" stroke-width="1" stroke-linecap="round" opacity=".7"/>
+
+  <!-- Thinkiee wordmark, seated naturally on the right palm rest -->
+  <g transform="rotate(-3 582 445)">
+    <text x="548" y="449" fill="#A9A9A4" font-family="Arial Narrow, Helvetica Neue, Arial, sans-serif" font-size="13.5" font-weight="800" letter-spacing="-.65">Thinkiee</text>
+    <circle cx="565.2" cy="438.1" r="2" fill="#D8453B"/>
+  </g>
+
+</svg>`;
+
+  const btnLabel = btn.querySelector('.label');
+
+  function applyTheme(theme) {
+    root.setAttribute('data-theme', theme);
+    btnLabel.textContent = theme === 'dark' ? 'light' : 'dark';
+    rigHolder.innerHTML = theme === 'dark' ? svgDark : svgLight;
+    localStorage.setItem('theme', theme);
+  }
+
+  const saved = localStorage.getItem('theme') || 'light';
+  applyTheme(saved);
+
+  btn.addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+  });
+</script>
+
 </body>
 </html>
