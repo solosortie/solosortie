@@ -1,0 +1,2 @@
+# /p/some-post is served by post.html, which reads the slug from the URL
+/p/*  /post  200
