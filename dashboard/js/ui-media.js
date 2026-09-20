@@ -1,4 +1,4 @@
-/* solosortie dashboard — Media library, uploader and picker */
+/* solosortie dashboard: Media library, uploader and picker */
 (function () {
   'use strict';
   const SS = window.SS;

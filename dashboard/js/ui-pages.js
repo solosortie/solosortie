@@ -1,4 +1,4 @@
-/* solosortie dashboard — Pages: about, footer, not-found text, navigation */
+/* solosortie dashboard: Pages: about, footer, not-found text, navigation */
 (function () {
   'use strict';
   const SS = window.SS;

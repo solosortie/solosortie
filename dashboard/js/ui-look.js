@@ -1,4 +1,4 @@
-/* solosortie dashboard — Look: colour, type, theme, home layout, logo */
+/* solosortie dashboard: Look: colour, type, theme, home layout, logo */
 (function () {
   'use strict';
   const SS = window.SS;

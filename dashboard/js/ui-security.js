@@ -1,4 +1,4 @@
-/* solosortie dashboard — Security: password, two-factor, idle lock, sign out everywhere */
+/* solosortie dashboard: Security: password, two-factor, idle lock, sign out everywhere */
 (function () {
   'use strict';
   const SS = window.SS;

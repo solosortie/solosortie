@@ -1,4 +1,4 @@
-/* solosortie dashboard — custom controls that replace the browser's own:
+/* solosortie dashboard: custom controls that replace the browser's own:
    select (dropdown list), datetime (calendar), chips (tags). */
 (function () {
   'use strict';
@@ -6,7 +6,7 @@
   const { h, icon } = SS;
 
   /* ── select ──────────────────────────────────────────── */
-  /* options: [{ value, label, hint?, glyph? }] — returns a button with .set(v) and .get() */
+  /* options: [{ value, label, hint?, glyph? }]; returns a button with .set(v) and .get() */
   SS.select = ({ options, value, onchange, label = 'Choose', block = true }) => {
     let cur = value, closeList = null;
     const btn = h('button', { class: 'sel' + (block ? ' sel--block' : ''), type: 'button', 'aria-haspopup': 'listbox', 'aria-expanded': 'false', 'aria-label': label });

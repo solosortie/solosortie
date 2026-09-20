@@ -1,4 +1,4 @@
-/* solosortie — public site
+/* solosortie: public site
    Reads from Supabase through read-only functions (list_posts, get_post, unlock_post, track_view)
    and one public settings table. Nothing here can write. */
 (function () {
@@ -127,7 +127,7 @@
   }
   function setHead(s, o) {
     o = o || {};
-    var title = o.title ? o.title + ' — ' + s.site_name : s.site_name;
+    var title = o.title ? o.title + ' · ' + s.site_name : s.site_name;
     document.title = title;
     var desc = o.description || s.meta_description || '';
     var img = o.image || s.og_image || '';

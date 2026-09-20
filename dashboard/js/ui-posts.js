@@ -1,4 +1,4 @@
-/* solosortie dashboard — Posts */
+/* solosortie dashboard: Posts */
 (function () {
   'use strict';
   const SS = window.SS;

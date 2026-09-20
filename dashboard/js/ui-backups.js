@@ -1,4 +1,4 @@
-/* solosortie dashboard — Backups: export, import, snapshots and rollback */
+/* solosortie dashboard: Backups: export, import, snapshots and rollback */
 (function () {
   'use strict';
   const SS = window.SS;

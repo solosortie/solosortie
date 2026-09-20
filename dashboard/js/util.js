@@ -1,4 +1,4 @@
-/* solosortie dashboard — shared helpers (DOM, dialogs, images, zip, markdown) */
+/* solosortie dashboard: shared helpers (DOM, dialogs, images, zip, markdown) */
 (function () {
   'use strict';
   const SS = (window.SS = window.SS || {});
@@ -283,7 +283,7 @@
     return { blob, mime: blob.type, name: file.name.replace(/\.[^.]+$/, '') + '.' + ext, width: w, height: hgt };
   };
 
-  /* Minimal ZIP writer (stored, no compression) — enough for a folder of markdown files. */
+  /* Minimal ZIP writer (stored, no compression), enough for a folder of markdown files. */
   SS.zip = (files) => {
     const enc = new TextEncoder();
     const table = new Uint32Array(256);

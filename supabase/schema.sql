@@ -372,7 +372,7 @@ create policy media_admin_all on storage.objects for all to authenticated
   with check (bucket_id = 'media' and public.is_admin());
 
 -- ─────────────────────────────────────────────────────────────
--- LAST STEP — make yourself the admin.
+-- LAST STEP: make yourself the admin.
 -- 1. Supabase → Authentication → Users → Add user (your email + a long password, "Auto confirm" on).
 -- 2. Supabase → Authentication → Sign In / Providers → turn OFF "Allow new users to sign up".
 -- 3. Put your email below, uncomment, and run just this line:

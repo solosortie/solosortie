@@ -1,4 +1,4 @@
-/* solosortie dashboard — shell: sign-in, navigation, routing, idle lock */
+/* solosortie dashboard: shell: sign-in, navigation, routing, idle lock */
 (function () {
   'use strict';
   const SS = window.SS;

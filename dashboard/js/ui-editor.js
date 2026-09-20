@@ -1,4 +1,4 @@
-/* solosortie dashboard — Editor
+/* solosortie dashboard: Editor
    A wide, quiet page to write on. Everything about the post lives in a drawer that stays closed until asked for. */
 (function () {
   'use strict';

@@ -1,4 +1,4 @@
-/* solosortie dashboard — Activity: private view counts and the action log */
+/* solosortie dashboard: Activity: private view counts and the action log */
 (function () {
   'use strict';
   const SS = window.SS;

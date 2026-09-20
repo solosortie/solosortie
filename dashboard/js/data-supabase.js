@@ -1,4 +1,4 @@
-/* solosortie dashboard — data layer (Supabase)
+/* solosortie dashboard: data layer (Supabase)
    Every screen talks to this interface only. */
 (function () {
   'use strict';

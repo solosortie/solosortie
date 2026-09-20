@@ -1,4 +1,4 @@
-/* solosortie dashboard — Site: live / maintenance / down, identity, search engines */
+/* solosortie dashboard: Site: live / maintenance / down, identity, search engines */
 (function () {
   'use strict';
   const SS = window.SS;
