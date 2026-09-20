@@ -1,3 +1,3 @@
 # solosortie
 
- find more at: [solosortie](solosortie.github.io)
+ find more at: [solosortie](https://solosortie.github.io)
